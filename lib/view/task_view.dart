@@ -1,6 +1,7 @@
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:slide_countdown_clock/slide_countdown_clock.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -40,16 +41,6 @@ class TaskView extends StatelessWidget {
         title: _titleText(title),
         subtitle: body,
       ),
-    );
-  }
-
-  Widget _checkpointsList(List<Checkpoint> checkpoints) {
-    return Column(
-      children: checkpoints
-          .map((Checkpoint x) => ListTile(
-                title: Text(x.title),
-              ))
-          .toList(),
     );
   }
 
@@ -95,10 +86,105 @@ class TaskView extends StatelessWidget {
         children: <Widget>[
           _infoCard('Created by', _bodyText(task.creator)),
           _renderClock(),
-          _infoCard('Map', _checkpointsList(task.checkpoints)),
+          MapView(task.checkpoints, task.doneSubtask),
+          // _infoCard('Checkpoint map', _checkpointsList(task.checkpoints)),
           _infoCard('Description', _bodyText(task.description)),
         ],
       ),
+    );
+  }
+}
+
+class MapView extends StatefulWidget {
+  final List<Checkpoint> checkpoints;
+  final int index;
+
+  MapView(this.checkpoints, this.index)
+      : assert(checkpoints.length > 0 &&
+            index >= 0 &&
+            index <= checkpoints.length);
+
+  @override
+  State<StatefulWidget> createState() => _MapViewState();
+}
+
+class _MapViewState extends State<MapView> {
+  final _controller = MapController();
+
+  @override
+  Widget build(BuildContext context) {
+    final idx = widget.checkpoints.length == widget.index
+        ? widget.checkpoints.length - 1
+        : widget.index;
+    // TODO: implement build
+    final centerLoc = widget.checkpoints[idx].location;
+    final markerList = widget.checkpoints
+        .map(
+          (Checkpoint x) => Marker(
+              width: 45,
+              height: 45,
+              point: x.location,
+              builder: (context) => Container(
+                    child: IconButton(
+                      icon: Icon(Icons.location_on),
+                      color: Colors.red,
+                      iconSize: 45,
+                      onPressed: () {
+                        // Move to position
+                        _controller.move(x.location, _controller.zoom);
+                      },
+                    ),
+                  )),
+        )
+        .toList();
+
+    return Stack(
+      children: <Widget>[
+        Container(
+          height: 300,
+          child: FlutterMap(
+            options: MapOptions(center: centerLoc, zoom: 10),
+            mapController: _controller,
+            layers: [
+              // TODO: Change map provider
+              TileLayerOptions(
+                urlTemplate:
+                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                subdomains: ['a', 'b', 'c'],
+              ),
+              MarkerLayerOptions(markers: markerList)
+            ],
+          ),
+        ),
+        Container(
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: widget.checkpoints.length,
+            itemBuilder: (context, index) {
+              // TODO: Constraint card
+              final item = widget.checkpoints[index];
+              return Container(
+                padding: EdgeInsets.all(10),
+                width: MediaQuery.of(context).size.width * 0.7,
+                child: Card(
+                  child: ListTile(
+                    title: Text(item.title),
+                    subtitle: Text(item.description),
+                    onTap: () {
+                      // Move to position
+                      _controller.move(item.location, _controller.zoom);
+                    },
+                  ),
+                ),
+              );
+            },
+            physics: BouncingScrollPhysics(),
+          ),
+          alignment: Alignment.bottomCenter,
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+          height: 150,
+        ),
+      ],
     );
   }
 }

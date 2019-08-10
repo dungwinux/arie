@@ -28,6 +28,8 @@ dependencies:
   slide_countdown_clock: ^1.0.3
   timeago: ^2.0.18
   moor_flutter: ^1.6.0
+  latlong: ^0.6.1
+  flutter_map: ^0.7.0+2
   
 
 dev_dependencies:

@@ -1,18 +1,18 @@
+import 'package:latlong/latlong.dart';
+
 class Checkpoint {
   final String title;
   final String description;
   final String label;
   final String type;
-  final int longitude;
-  final int latitude;
+  final LatLng location;
 
   Checkpoint({
     this.title,
     this.description,
     this.label,
     this.type,
-    this.latitude,
-    this.longitude,
+    this.location,
   });
 
   Checkpoint.fromJson(Map<String, dynamic> res)
@@ -20,15 +20,17 @@ class Checkpoint {
         description = res['description'],
         label = res['label'],
         type = res['type'],
-        latitude = res['latitude'],
-        longitude = res['longitude'];
+        location = LatLng(
+          double.tryParse(res['latitude'].toString()),
+          double.tryParse(res['longitude'].toString()),
+        );
 
   Map<String, dynamic> toJson() => {
         'title': title,
         'description': description,
         'label': label,
         'type': type,
-        'longitude': longitude,
-        'latitude': latitude
+        'longitude': location.longitude,
+        'latitude': location.latitude
       };
 }
