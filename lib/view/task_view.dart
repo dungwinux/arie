@@ -110,6 +110,7 @@ class MapView extends StatefulWidget {
 
 class _MapViewState extends State<MapView> {
   final _controller = MapController();
+  final _pageController = PageController(viewportFraction: 0.7);
 
   @override
   Widget build(BuildContext context) {
@@ -129,10 +130,7 @@ class _MapViewState extends State<MapView> {
                       icon: Icon(Icons.location_on),
                       color: Colors.red,
                       iconSize: 45,
-                      onPressed: () {
-                        // Move to position
-                        _controller.move(x.location, _controller.zoom);
-                      },
+                      onPressed: () {},
                     ),
                   )),
         )
@@ -143,7 +141,7 @@ class _MapViewState extends State<MapView> {
         Container(
           height: 300,
           child: FlutterMap(
-            options: MapOptions(center: centerLoc, zoom: 10),
+            options: MapOptions(center: centerLoc, zoom: 12.5),
             mapController: _controller,
             layers: [
               // TODO: Change map provider
@@ -157,32 +155,49 @@ class _MapViewState extends State<MapView> {
           ),
         ),
         Container(
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
+          height: 150,
+          padding: EdgeInsets.symmetric(vertical: 24.0),
+          child: PageView.builder(
+            controller: _pageController,
             itemCount: widget.checkpoints.length,
+            physics: BouncingScrollPhysics(),
+            onPageChanged: (int index) {
+              _controller.move(
+                  widget.checkpoints[index].location, _controller.zoom);
+            },
             itemBuilder: (context, index) {
-              // TODO: Constraint card
+              // TODO: Add Tick for completed checkpoint
               final item = widget.checkpoints[index];
               return Container(
                 padding: EdgeInsets.all(10),
-                width: MediaQuery.of(context).size.width * 0.7,
                 child: Card(
                   child: ListTile(
-                    title: Text(item.title),
-                    subtitle: Text(item.description),
+                    title: Text(
+                      item.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text(
+                      item.description,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     onTap: () {
-                      // Move to position
-                      _controller.move(item.location, _controller.zoom);
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => Card(
+                          child: ListTile(
+                            title: Text(item.title),
+                            subtitle: Text(item.description),
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ),
               );
             },
-            physics: BouncingScrollPhysics(),
           ),
-          alignment: Alignment.bottomCenter,
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-          height: 150,
         ),
       ],
     );
