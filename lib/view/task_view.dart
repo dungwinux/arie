@@ -1,6 +1,8 @@
+import 'package:arie/controller/img_process.dart';
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
 import 'package:arie/view/camera/camera.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:slide_countdown_clock/slide_countdown_clock.dart';
@@ -97,19 +99,47 @@ class TaskView extends StatelessWidget {
           _infoCard('Description', _bodyText(task.description)),
         ],
       ),
-      floatingActionButton: (isAssigned
-          ? FloatingActionButton(
-              child: Icon(Icons.camera),
-              onPressed: () async {
-                final imgPath = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CameraPage()),
-                );
-                // TODO: Process camera output
-                print(imgPath);
-              },
-            )
-          : null),
+      floatingActionButton:
+          (isAssigned && task.doneSubtask < task.checkpoints.length
+              ? FloatingActionButton(
+                  child: Icon(Icons.camera),
+                  onPressed: () async {
+                    final imgPath = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CameraPage()),
+                    );
+                    if (imgPath == null) return;
+                    // TODO: Process camera output
+                    await showModalBottomSheet(
+                        context: context,
+                        builder: (context) => FutureBuilder(
+                              // TODO: Process different type of checkpoint
+                              future: mlBarcodeScan(imgPath),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  // TODO: Remake result display
+                                  List<Barcode> res = snapshot.data;
+
+                                  if (res.any((x) =>
+                                      x.rawValue ==
+                                      task.checkpoints[task.doneSubtask].label))
+                                    return Card(
+                                      child: Text('Correct answer'),
+                                    );
+                                  else
+                                    return Card(
+                                      child: Text('Found nothing'),
+                                    );
+                                } else
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                              },
+                            ));
+                  },
+                )
+              : null),
     );
   }
 }
