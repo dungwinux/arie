@@ -59,7 +59,11 @@ class TaskView extends StatelessWidget {
       );
     } else if (now.isAfter(task.endTime)) {
       return _infoCard(
-          'Task ended', Center(child: Text(timeago.format(task.endTime))));
+          'Task ended',
+          Padding(
+            child: Center(child: Text(timeago.format(task.endTime))),
+            padding: EdgeInsets.all(10),
+          ));
     } else if (now.isAfter(task.startTime) && now.isBefore(task.endTime)) {
       return _infoCard(
         'Time left',
@@ -123,10 +127,10 @@ class _MapViewState extends State<MapView> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Set default page
     final idx = widget.checkpoints.length == widget.index
         ? widget.checkpoints.length - 1
         : widget.index;
-    // TODO: implement build
     final centerLoc = widget.checkpoints[idx].location;
     final markerList = widget.checkpoints
         .map(
