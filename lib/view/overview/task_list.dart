@@ -24,7 +24,7 @@ class _TaskListState extends State<TaskList> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    // TODO: Add animation using AnimatedList
     return StreamBuilder(
       stream: taskDB.watchAllTasks().asyncMap(
             (List<BasicTask> task) async =>
@@ -82,9 +82,24 @@ class _TaskListState extends State<TaskList> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => TaskView(x),
+                          builder: (context) => TaskView(x, isAssigned: true),
                         ),
                       );
+                    },
+                    onLongPress: () {
+                      // TODO: Handle menu for delete, modify
+                      // showMenu(
+                      //   context: context,
+                      //   items: <PopupMenuEntry>[
+                      //     PopupMenuItem(
+                      //       child: ListTile(
+                      //         title: Text('Delete'),
+                      //         leading: Icon(Icons.delete),
+                      //       ),
+                      //     )
+                      //   ],
+                      //   position: RelativeRect.fill,
+                      // );
                     },
                     leading: CircularPercentIndicator(
                       radius: 48,
