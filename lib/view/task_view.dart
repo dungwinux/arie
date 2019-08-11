@@ -7,8 +7,9 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class TaskView extends StatelessWidget {
   final Task task;
+  final bool isAssigned;
 
-  TaskView(this.task);
+  TaskView(this.task, {this.isAssigned = false});
 
   Widget _titleText(String text) {
     return Container(
@@ -91,6 +92,14 @@ class TaskView extends StatelessWidget {
           _infoCard('Description', _bodyText(task.description)),
         ],
       ),
+      floatingActionButton: (isAssigned
+          ? FloatingActionButton(
+              child: Icon(Icons.camera),
+              onPressed: () {
+                // TODO: Add Camera function
+              },
+            )
+          : null),
     );
   }
 }
