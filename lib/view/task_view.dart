@@ -1,5 +1,6 @@
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
+import 'package:arie/view/camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:slide_countdown_clock/slide_countdown_clock.dart';
@@ -99,8 +100,13 @@ class TaskView extends StatelessWidget {
       floatingActionButton: (isAssigned
           ? FloatingActionButton(
               child: Icon(Icons.camera),
-              onPressed: () {
-                // TODO: Add Camera function
+              onPressed: () async {
+                final imgPath = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CameraPage()),
+                );
+                // TODO: Process camera output
+                print(imgPath);
               },
             )
           : null),

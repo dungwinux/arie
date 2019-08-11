@@ -1,5 +1,5 @@
 name: arie
-description: A new Flutter project.
+description: Task provider application.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -23,6 +23,10 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+  # ML Kit
+  camera: ^0.5.3
+  path: ^1.6.2
+  path_provider: ^1.2.0
   percent_indicator: ^2.1.1
   http: ^0.12.0+2
   slide_countdown_clock: ^1.0.3

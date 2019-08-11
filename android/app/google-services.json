@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "584033964630",
+    "firebase_url": "https://arie-835b1.firebaseio.com",
+    "project_id": "arie-835b1",
+    "storage_bucket": "arie-835b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:584033964630:android:7db664dae7405217",
+        "android_client_info": {
+          "package_name": "com.kori.arie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "584033964630-d955kp4744tmi30a8sgif0mhq7idk1ps.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAI6jyvv5o8Elj5M_F6y-qPrAOIJsqD3Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "584033964630-d955kp4744tmi30a8sgif0mhq7idk1ps.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
