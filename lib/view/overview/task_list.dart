@@ -32,7 +32,25 @@ class _TaskListState extends State<TaskList> {
           ),
       builder: (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
-          List<Task> _formatList = snapshot.data ?? [];
+          if (snapshot.hasError)
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.sentiment_dissatisfied,
+                    size: 100,
+                    color: Colors.black38,
+                  ),
+                  Text(
+                    'Something is not working: ${snapshot.error}',
+                    style: TextStyle(color: Colors.black38),
+                  ),
+                ],
+              ),
+            );
+
+          List<Task> _formatList = snapshot.data;
 
           if (_formatList.isEmpty)
             return Center(
