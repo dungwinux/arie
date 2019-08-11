@@ -88,11 +88,8 @@ class $BasicTasksTable extends BasicTasks
   @override
   GeneratedTextColumn get id => _id ??= _constructId();
   GeneratedTextColumn _constructId() {
-    return GeneratedTextColumn(
-      'id',
-      $tableName,
-      false,
-    );
+    return GeneratedTextColumn('id', $tableName, false,
+        minTextLength: 24, maxTextLength: 24, $customConstraints: 'UNIQUE');
   }
 
   final VerificationMeta _progressMeta = const VerificationMeta('progress');

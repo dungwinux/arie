@@ -5,31 +5,6 @@ import 'package:arie/model/task.dart';
 import 'package:arie/view/task_view.dart';
 import 'package:flutter/material.dart';
 
-// class SearchMenu extends StatefulWidget {
-//   @override
-//   _SearchMenuState createState() => _SearchMenuState();
-// }
-
-// class _SearchMenuState extends State<SearchMenu> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Browse Tasks'),
-//         actions: <Widget>[
-//           IconButton(
-//             icon: Icon(Icons.search),
-//             tooltip: 'Search',
-//             onPressed: () {
-//               showSearch(context: context, delegate: SearchMenuDelegate());
-//             },
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
 class SearchMenuDelegate extends SearchDelegate<Task> {
   // TODO: Add History
   @override
@@ -144,11 +119,22 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
                 },
                 trailing: IconButton(
                   icon: Icon(Icons.send),
-                  onPressed: () {
-                    taskDB.insertTask(
-                        BasicTask(id: _tasks[index].id, progress: 0));
-                    Scaffold.of(context).showSnackBar(
-                        SnackBar(content: Text('${_tasks[index].name} Added')));
+                  onPressed: () async {
+                    final sendTask =
+                        BasicTask(id: _tasks[index].id, progress: 0);
+                    if (await taskDB.isTaskExist(sendTask))
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                          content:
+                              Text('${_tasks[index].name} was already added')));
+                    else
+                      try {
+                        await taskDB.insertTask(sendTask);
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text('Added ${_tasks[index].name}')));
+                      } catch (e) {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text('Something is not right: $e')));
+                      }
                   },
                 ),
               ),
