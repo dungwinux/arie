@@ -1,5 +1,7 @@
 import 'package:arie/controller/img_process.dart';
+import 'package:arie/controller/task_local.dart';
 import 'package:arie/model/checkpoint.dart';
+import 'package:arie/model/database.dart';
 import 'package:arie/model/task.dart';
 import 'package:arie/view/camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
@@ -132,11 +134,16 @@ class TaskView extends StatelessWidget {
 
                               // TODO: Recognize answer and increase doneSubtask
                               if (res.any((x) => (x ==
-                                  task.checkpoints[task.doneSubtask].label)))
+                                  task.checkpoints[task.doneSubtask].label))) {
+                                // TODO: UpdateTask upon correct by moving to _futureResult
+                                taskDB
+                                    .updateTask(BasicTask(
+                                        id: task.id,
+                                        progress: task.doneSubtask + 1));
                                 return ListTile(
                                   title: Text('Correct answer'),
                                 );
-                              else
+                              } else
                                 return ListTile(
                                   title: Text('Wrong answer'),
                                   subtitle: Text('$res'),
