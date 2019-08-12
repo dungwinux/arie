@@ -99,47 +99,56 @@ class TaskView extends StatelessWidget {
           _infoCard('Description', _bodyText(task.description)),
         ],
       ),
-      floatingActionButton:
-          (isAssigned && task.doneSubtask < task.checkpoints.length
-              ? FloatingActionButton(
-                  child: Icon(Icons.camera),
-                  onPressed: () async {
-                    final imgPath = await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CameraPage()),
-                    );
-                    if (imgPath == null) return;
-                    // TODO: Process camera output
-                    await showModalBottomSheet(
-                        context: context,
-                        builder: (context) => FutureBuilder(
-                              // TODO: Process different type of checkpoint
-                              future: mlBarcodeScan(imgPath),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  // TODO: Remake result display
-                                  List<Barcode> res = snapshot.data;
+      floatingActionButton: (isAssigned &&
+              task.doneSubtask < task.checkpoints.length
+          ? FloatingActionButton(
+              child: Icon(Icons.camera),
+              onPressed: () async {
+                final imgPath = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CameraPage()),
+                );
+                if (imgPath == null) return;
+                // TODO: Process camera output
+                await showModalBottomSheet(
+                    context: context,
+                    builder: (context) => FutureBuilder(
+                          // TODO: Process different type of checkpoint
+                          future: mlBarcodeScan(imgPath),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              final List<String> res =
+                                  (snapshot.data as List<Barcode>)
+                                      .map((Barcode x) => x.rawValue)
+                                      .toList();
 
-                                  if (res.any((x) =>
-                                      x.rawValue ==
-                                      task.checkpoints[task.doneSubtask].label))
-                                    return Card(
-                                      child: Text('Correct answer'),
-                                    );
-                                  else
-                                    return Card(
-                                      child: Text('Found nothing'),
-                                    );
-                                } else
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                              },
-                            ));
-                  },
-                )
-              : null),
+                              if (res.isEmpty) {
+                                return ListTile(
+                                  title: Text('Nothing is found'),
+                                );
+                              }
+
+                              // TODO: Recognize answer and increase doneSubtask
+                              if (res.any((x) => (x ==
+                                  task.checkpoints[task.doneSubtask].label)))
+                                return ListTile(
+                                  title: Text('Correct answer'),
+                                );
+                              else
+                                return ListTile(
+                                  title: Text('Wrong answer'),
+                                  subtitle: Text('$res'),
+                                );
+                            } else
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                          },
+                        ));
+              },
+            )
+          : null),
     );
   }
 }
