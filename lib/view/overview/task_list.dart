@@ -16,20 +16,26 @@ class TaskList extends StatefulWidget {
 // TODO: Move FutureBuilder to Overview
 
 class _TaskListState extends State<TaskList> {
+  Stream<List<Task>> _data;
+
   @override
   void initState() {
     super.initState();
-    // TODO: Seperate data-fetching
+    _data = _fetchData();
+  }
+
+  Stream<List<Task>> _fetchData() {
+    return taskDB.watchAllTasks().asyncMap(
+          (List<BasicTask> task) async =>
+              Future.wait(task.map((x) => TaskFetch().fetch(x.id))),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: Add animation using AnimatedList
     return StreamBuilder(
-      stream: taskDB.watchAllTasks().asyncMap(
-            (List<BasicTask> task) async =>
-                Future.wait(task.map((x) => TaskFetch().fetch(x.id))),
-          ),
+      stream: _data,
       builder: (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasError)
@@ -71,43 +77,30 @@ class _TaskListState extends State<TaskList> {
             );
           _formatList.sort((a, b) => (b.percent.compareTo(a.percent)));
           final renderList = _formatList
-              .map((Task x) => ListTile(
-                    title: Text(x.name),
-                    subtitle: Text(
-                      x.description,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TaskView(x, isAssigned: true),
-                        ),
-                      );
-                    },
-                    onLongPress: () {
-                      // TODO: Handle menu for delete, modify
-                      // showMenu(
-                      //   context: context,
-                      //   items: <PopupMenuEntry>[
-                      //     PopupMenuItem(
-                      //       child: ListTile(
-                      //         title: Text('Delete'),
-                      //         leading: Icon(Icons.delete),
-                      //       ),
-                      //     )
-                      //   ],
-                      //   position: RelativeRect.fill,
-                      // );
-                    },
-                    leading: CircularPercentIndicator(
-                      radius: 48,
-                      percent: (x.percent),
-                      center: Text('${x.doneSubtask}/${x.checkpoints.length}'),
-                      animation: true,
-                    ),
-                  ))
+              .map(
+                (Task x) => ListTile(
+                  title: Text(x.name),
+                  subtitle: Text(
+                    x.description,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TaskView(x, isAssigned: true),
+                      ),
+                    );
+                  },
+                  leading: CircularPercentIndicator(
+                    radius: 48,
+                    percent: (x.percent),
+                    center: Text('${x.doneSubtask}/${x.checkpoints.length}'),
+                    animation: true,
+                  ),
+                ),
+              )
               .expand((x) => [Divider(), x])
               .toList()
                 ..add(FlutterLogo())

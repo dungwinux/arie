@@ -109,12 +109,13 @@ class TaskView extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => CameraPage()),
                 );
                 if (imgPath == null) return;
+                final _futureResult = mlBarcodeScan(imgPath);
                 // TODO: Process camera output
                 await showModalBottomSheet(
                     context: context,
                     builder: (context) => FutureBuilder(
                           // TODO: Process different type of checkpoint
-                          future: mlBarcodeScan(imgPath),
+                          future: _futureResult,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {
@@ -141,9 +142,7 @@ class TaskView extends StatelessWidget {
                                   subtitle: Text('$res'),
                                 );
                             } else
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
+                              return LinearProgressIndicator();
                           },
                         ));
               },
@@ -177,22 +176,27 @@ class _MapViewState extends State<MapView> {
         ? widget.checkpoints.length - 1
         : widget.index;
     final centerLoc = widget.checkpoints[idx].location;
-    final markerList = widget.checkpoints
-        .map(
-          (Checkpoint x) => Marker(
-              width: 45,
-              height: 45,
-              point: x.location,
-              builder: (context) => Container(
-                    child: IconButton(
-                      icon: Icon(Icons.location_on),
-                      color: Colors.red,
-                      iconSize: 45,
-                      onPressed: () {},
-                    ),
-                  )),
-        )
-        .toList();
+
+    List<Marker> markerList = <Marker>[];
+    for (int i = 0; i < widget.checkpoints.length; i++) {
+      final x = widget.checkpoints[i];
+      markerList.add(
+        Marker(
+            width: 45,
+            height: 45,
+            point: x.location,
+            builder: (context) => Container(
+                  child: IconButton(
+                    icon: Icon(Icons.location_on),
+                    color: Colors.red,
+                    iconSize: 45,
+                    onPressed: () {
+                      _pageController.jumpToPage(i);
+                    },
+                  ),
+                )),
+      );
+    }
 
     return Stack(
       children: <Widget>[
@@ -251,6 +255,10 @@ class _MapViewState extends State<MapView> {
                         ),
                       );
                     },
+                    onLongPress: () {
+                      _controller.move(item.location, _controller.zoom);
+                    },
+                    trailing: (idx > index ? Icon(Icons.check) : null),
                   ),
                 ),
               );
