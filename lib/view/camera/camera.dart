@@ -56,7 +56,6 @@ class _CameraPageState extends State<CameraPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // If the Future is complete, display the preview.
-            // TODO: Add Aspect ratio
             return Scaffold(
               backgroundColor: Colors.black,
               body: SafeArea(
