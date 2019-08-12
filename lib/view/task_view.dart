@@ -228,7 +228,6 @@ class _MapViewState extends State<MapView> {
                   widget.checkpoints[index].location, _controller.zoom);
             },
             itemBuilder: (context, index) {
-              // TODO: Add Tick for completed checkpoint
               final item = widget.checkpoints[index];
               return Container(
                 padding: EdgeInsets.all(10),
@@ -258,7 +257,9 @@ class _MapViewState extends State<MapView> {
                     onLongPress: () {
                       _controller.move(item.location, _controller.zoom);
                     },
-                    trailing: (idx > index ? Icon(Icons.check) : null),
+                    trailing: (widget.index > index
+                        ? Icon(Icons.check, color: Colors.green)
+                        : null),
                   ),
                 ),
               );
