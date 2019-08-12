@@ -57,9 +57,14 @@ class _CameraPageState extends State<CameraPage> {
           if (snapshot.connectionState == ConnectionState.done) {
             // If the Future is complete, display the preview.
             // TODO: Add Aspect ratio
-            return AspectRatio(
-              child: CameraPreview(_controller),
-              aspectRatio: _controller.value.aspectRatio,
+            return Scaffold(
+              backgroundColor: Colors.black,
+              body: SafeArea(
+                child: AspectRatio(
+                  child: CameraPreview(_controller),
+                  aspectRatio: _controller.value.aspectRatio,
+                ),
+              ),
             );
           } else {
             // Otherwise, display a loading indicator.
