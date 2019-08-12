@@ -111,8 +111,33 @@ class TaskView extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => CameraPage()),
                 );
                 if (imgPath == null) return;
-                final _futureResult = mlBarcodeScan(imgPath);
-                // TODO: Process camera output
+                final Future<Widget> _futureResult =
+                    mlBarcodeScan(imgPath).then((data) async {
+                  final List<String> res =
+                      data.map((Barcode x) => x.rawValue).toList();
+                  if (res.isEmpty) {
+                    return ListTile(
+                      title: Text('Nothing is found'),
+                    );
+                  }
+                  if (res.any(
+                      (x) => x == task.checkpoints[task.doneSubtask].label)) {
+                    await taskDB.updateTask(
+                        BasicTask(id: task.id, progress: task.doneSubtask + 1));
+                    return ListTile(
+                      title: Text('Correct answer'),
+                    );
+                  } else {
+                    return ListTile(
+                      title: Text('Wrong answer'),
+                      subtitle: Text('$res'),
+                    );
+                  }
+                }).catchError(
+                  (e) => ListTile(
+                    title: Text('Something is not right'),
+                  ),
+                );
                 await showModalBottomSheet(
                     context: context,
                     builder: (context) => FutureBuilder(
@@ -121,33 +146,7 @@ class TaskView extends StatelessWidget {
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {
-                              final List<String> res =
-                                  (snapshot.data as List<Barcode>)
-                                      .map((Barcode x) => x.rawValue)
-                                      .toList();
-
-                              if (res.isEmpty) {
-                                return ListTile(
-                                  title: Text('Nothing is found'),
-                                );
-                              }
-
-                              // TODO: Recognize answer and increase doneSubtask
-                              if (res.any((x) => (x ==
-                                  task.checkpoints[task.doneSubtask].label))) {
-                                // TODO: UpdateTask upon correct by moving to _futureResult
-                                taskDB
-                                    .updateTask(BasicTask(
-                                        id: task.id,
-                                        progress: task.doneSubtask + 1));
-                                return ListTile(
-                                  title: Text('Correct answer'),
-                                );
-                              } else
-                                return ListTile(
-                                  title: Text('Wrong answer'),
-                                  subtitle: Text('$res'),
-                                );
+                              return snapshot.data;
                             } else
                               return LinearProgressIndicator();
                           },
