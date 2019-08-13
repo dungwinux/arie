@@ -33,10 +33,12 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.search),
+        tooltip: 'Search',
         onPressed: () async {
           await showSearch(context: context, delegate: SearchMenuDelegate());
         },
       ),
+      extendBody: true,
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         notchMargin: 8,
@@ -49,8 +51,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Open drawer, or show up BottomSheet
               },
             ),
+            Container(
+              height: 52,
+            ),
             IconButton(
-              icon: const Icon(Icons.add),
+              icon: Icon(Icons.add),
               onPressed: () {
                 Navigator.push(
                   context,

@@ -43,6 +43,7 @@ class _TaskListState extends State<TaskList> {
       builder: (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasError)
+            // TODO: Add 'tap to retry'
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -82,32 +83,78 @@ class _TaskListState extends State<TaskList> {
           _formatList.sort((a, b) => (b.percent.compareTo(a.percent)));
           final renderList = _formatList
               .map(
-                (Task x) => ListTile(
-                  title: Text(x.name),
-                  subtitle: Text(
-                    x.description,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TaskView(x, isAssigned: true),
+                (Task x) => Dismissible(
+                  key: Key(x.id),
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+                    decoration: BoxDecoration(color: Colors.redAccent),
+                    child: Padding(
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
                       ),
-                    );
-                  },
-                  leading: CircularPercentIndicator(
-                    radius: 48,
-                    percent: (x.percent),
-                    center: Text('${x.doneSubtask}/${x.checkpoints.length}'),
-                    animation: true,
+                      padding: EdgeInsets.all(20),
+                    ),
+                    alignment: Alignment.centerRight,
                   ),
-                ),
+                  confirmDismiss: (direction) => showDialog<bool>(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Are you sure you want to delete ?'),
+                          content:
+                              Text('The following action is irreversible!'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                            ),
+                            FlatButton(
+                              child: Text('Proceed'),
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                            ),
+                          ],
+                        );
+                      }),
+                  onDismissed: (direction) {
+                    taskDB.deleteTask(BasicTask(id: x.id));
+                  },
+                  child: DecoratedBox(
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(24)),
+                    child: ListTile(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                      title: Text(x.name),
+                      subtitle: Text(
+                        x.description,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TaskView(x, isAssigned: true),
+                          ),
+                        );
+                      },
+                      leading: CircularPercentIndicator(
+                        radius: 48,
+                        percent: (x.percent),
+                        center:
+                            Text('${x.doneSubtask}/${x.checkpoints.length}'),
+                        animation: true,
+                      ),
+                    ),
+                  ),
+                ) as Widget,
               )
-              .expand((x) => [Divider(), x])
               .toList()
-                ..add(FlutterLogo())
                 ..insert(
                     0,
                     OverallProgress(_formatList.length,
