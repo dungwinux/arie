@@ -23,6 +23,7 @@ class _TaskListState extends State<TaskList> {
     super.initState();
     _data = _fetchData();
   }
+
   // Consider switch from Stream to Future
   Stream<List<Task>> _fetchData() {
     return taskDB.watchAllTasks().asyncMap(
@@ -107,16 +108,18 @@ class _TaskListState extends State<TaskList> {
                     center: Text('${x.doneSubtask}/${x.checkpoints.length}'),
                     animation: true,
                   ),
-                ) as Widget,
+                ),
               )
-              .toList()
-                ..insert(
-                  0,
-                  OverallProgress(_formatList.length,
-                      _formatList.where((x) => x.percent == 1).length),
-                );
+              .toList();
+
           return Column(
-            children: renderList,
+            children: [
+              OverallProgress(
+                _formatList.length,
+                _formatList.where((x) => x.percent == 1).length,
+              ),
+              Card(child: Column(children: renderList)),
+            ],
           );
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(

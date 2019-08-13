@@ -93,45 +93,55 @@ class TaskView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(task.name),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(task.name),
+            Text(
+              'by ${task.creator}',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+            )
+          ],
+        ),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () async {
-              final bool confirmDelete = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('Are you sure you want to delete ?'),
-                  content: Text('The following action is irreversible!'),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text('Cancel'),
-                      onPressed: () {
-                        Navigator.of(context).pop(false);
-                      },
-                    ),
-                    FlatButton(
-                      child: Text('Delete'),
-                      onPressed: () {
-                        Navigator.of(context).pop(true);
-                      },
-                    ),
-                  ],
-                ),
-              );
-              if (confirmDelete) {
-                taskDB.deleteTask(BasicTask(id: task.id));
-                Navigator.of(context).pop();
-              } else {
-                return;
-              }
-            },
-          ),
+          if (isAssigned)
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () async {
+                final bool confirmDelete = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('Are you sure you want to delete ?'),
+                    content: Text('The following action is irreversible!'),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                      ),
+                      FlatButton(
+                        child: Text('Delete'),
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+                if (confirmDelete) {
+                  taskDB.deleteTask(BasicTask(id: task.id));
+                  Navigator.of(context).pop();
+                } else {
+                  return;
+                }
+              },
+            ),
         ],
       ),
       body: ListView(
         children: <Widget>[
-          _infoCard('Created by', _bodyText(task.creator)),
           _renderClock(),
           MapView(task.checkpoints, task.doneSubtask),
           // _infoCard('Checkpoint map', _checkpointsList(task.checkpoints)),
@@ -268,7 +278,7 @@ class _MapViewState extends State<MapView> {
           ),
         ),
         Container(
-          height: 150,
+          height: 300,
           padding: EdgeInsets.symmetric(vertical: 20.0),
           child: PageView.builder(
             controller: _pageController,
@@ -282,7 +292,7 @@ class _MapViewState extends State<MapView> {
               final item = widget.checkpoints[index];
               return Container(
                 padding: EdgeInsets.all(8),
-                alignment: Alignment.center,
+                alignment: Alignment.bottomCenter,
                 child: Card(
                   child: ListTile(
                     title: Text(
