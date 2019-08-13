@@ -25,7 +25,7 @@ class TaskFetch {
           .toList();
       return output;
     } catch (e) {
-      return Future.error(e);
+      return Future.error('Failed to get data from server');
     }
   }
 
@@ -39,7 +39,7 @@ class TaskFetch {
       final output = Task.fromJson(jsonDecode(rawResult.body));
       return output;
     } catch (e) {
-      return Future.error(e);
+      return Future.error('Failed to get data from server');
     }
   }
 }
