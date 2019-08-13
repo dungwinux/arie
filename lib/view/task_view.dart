@@ -181,6 +181,8 @@ class _MapViewState extends State<MapView> {
     final idx = widget.checkpoints.length == widget.index
         ? widget.checkpoints.length - 1
         : widget.index;
+    // TODO: Convert Description to StreamBuilder
+    // TODO: Add last section so that PageView does not overflow
     final centerLoc = widget.checkpoints[idx].location;
 
     List<Marker> markerList = <Marker>[];
