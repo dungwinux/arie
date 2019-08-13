@@ -60,6 +60,7 @@ class TaskView extends StatelessWidget {
           child: SlideCountdownClock(
             duration: task.startTime.difference(DateTime.now()),
             separator: ':',
+            shouldShowDays: true,
           ),
         ),
       );
@@ -77,6 +78,7 @@ class TaskView extends StatelessWidget {
           child: SlideCountdownClock(
             duration: task.endTime.difference(DateTime.now()),
             separator: ':',
+            shouldShowDays: true,
           ),
         ),
       );
@@ -92,6 +94,40 @@ class TaskView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(task.name),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () async {
+              final bool confirmDelete = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Are you sure you want to delete ?'),
+                  content: Text('The following action is irreversible!'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('Cancel'),
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                    ),
+                    FlatButton(
+                      child: Text('Delete'),
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                    ),
+                  ],
+                ),
+              );
+              if (confirmDelete) {
+                taskDB.deleteTask(BasicTask(id: task.id));
+                Navigator.of(context).pop();
+              } else {
+                return;
+              }
+            },
+          ),
+        ],
       ),
       body: ListView(
         children: <Widget>[

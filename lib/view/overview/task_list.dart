@@ -23,7 +23,7 @@ class _TaskListState extends State<TaskList> {
     super.initState();
     _data = _fetchData();
   }
-
+  // Consider switch from Stream to Future
   Stream<List<Task>> _fetchData() {
     return taskDB.watchAllTasks().asyncMap(
           (List<BasicTask> task) async =>
@@ -63,7 +63,7 @@ class _TaskListState extends State<TaskList> {
 
           List<Task> _formatList = snapshot.data;
 
-          if (_formatList.isEmpty)
+          if (!snapshot.hasData || _formatList.isEmpty)
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -83,77 +83,38 @@ class _TaskListState extends State<TaskList> {
           _formatList.sort((a, b) => (b.percent.compareTo(a.percent)));
           final renderList = _formatList
               .map(
-                (Task x) => Dismissible(
+                (Task x) => ListTile(
                   key: Key(x.id),
-                  direction: DismissDirection.endToStart,
-                  background: Container(
-                    decoration: BoxDecoration(color: Colors.redAccent),
-                    child: Padding(
-                      child: Icon(
-                        Icons.delete,
-                        color: Colors.white,
-                      ),
-                      padding: EdgeInsets.all(20),
-                    ),
-                    alignment: Alignment.centerRight,
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                  title: Text(x.name),
+                  subtitle: Text(
+                    x.description,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  onDismissed: (direction) {
-                    taskDB.deleteTask(BasicTask(id: x.id));
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TaskView(x, isAssigned: true),
+                      ),
+                    );
                   },
-                  confirmDismiss: (direction) => showDialog<bool>(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text('Are you sure you want to delete ?'),
-                          content:
-                              Text('The following action is irreversible!'),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('Cancel'),
-                              onPressed: () {
-                                Navigator.of(context).pop(false);
-                              },
-                            ),
-                            FlatButton(
-                              child: Text('Proceed'),
-                              onPressed: () {
-                                Navigator.of(context).pop(true);
-                              },
-                            ),
-                          ],
-                        );
-                      }),
-                  child: ListTile(
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-                    title: Text(x.name),
-                    subtitle: Text(
-                      x.description,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => TaskView(x, isAssigned: true),
-                        ),
-                      );
-                    },
-                    leading: CircularPercentIndicator(
-                      radius: 48,
-                      percent: (x.percent),
-                      center: Text('${x.doneSubtask}/${x.checkpoints.length}'),
-                      animation: true,
-                    ),
+                  leading: CircularPercentIndicator(
+                    radius: 48,
+                    percent: (x.percent),
+                    center: Text('${x.doneSubtask}/${x.checkpoints.length}'),
+                    animation: true,
                   ),
                 ) as Widget,
               )
               .toList()
                 ..insert(
-                    0,
-                    OverallProgress(_formatList.length,
-                        _formatList.where((x) => x.percent == 1).length));
+                  0,
+                  OverallProgress(_formatList.length,
+                      _formatList.where((x) => x.percent == 1).length),
+                );
           return Column(
             children: renderList,
           );
