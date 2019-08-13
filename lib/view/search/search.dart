@@ -55,8 +55,9 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
 
   @override
   Widget buildResults(BuildContext context) {
+    final _searchResult = TaskFetch().fetchAll(query);
     return FutureBuilder(
-      future: TaskFetch().fetchAll(query),
+      future: _searchResult,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
@@ -97,45 +98,44 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
               );
             return ListView.builder(
               itemCount: _tasks.length,
-              itemBuilder: (context, index) => ListTile(
-                leading: Icon(Icons.assignment, size: 40),
-                title: Text(
-                  _tasks[index].name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                subtitle: Text(
-                  'by ${_tasks[index].creator}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
+              itemBuilder: (context, index) => Card(
+                child: ListTile(
+                  title: Text(
+                    _tasks[index].name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text(
+                    'by ${_tasks[index].creator}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () {
+                    showBottomSheet(
+                      context: context,
                       builder: (context) => TaskView(_tasks[index]),
-                    ),
-                  );
-                },
-                trailing: IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () async {
-                    final sendTask =
-                        BasicTask(id: _tasks[index].id, progress: 0);
-                    if (await taskDB.isTaskExist(sendTask))
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                          content:
-                              Text('${_tasks[index].name} was already added')));
-                    else
-                      try {
-                        await taskDB.insertTask(sendTask);
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text('Added ${_tasks[index].name}')));
-                      } catch (e) {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text('Something is not right: $e')));
-                      }
+                    );
                   },
+                  trailing: IconButton(
+                    icon: Icon(Icons.send),
+                    onPressed: () async {
+                      final sendTask =
+                          BasicTask(id: _tasks[index].id, progress: 0);
+                      if (await taskDB.isTaskExist(sendTask))
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                '${_tasks[index].name} was already added')));
+                      else
+                        try {
+                          await taskDB.insertTask(sendTask);
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text('Added ${_tasks[index].name}')));
+                        } catch (e) {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text('Something is not right: $e')));
+                        }
+                    },
+                  ),
                 ),
               ),
             );
