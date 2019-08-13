@@ -196,19 +196,20 @@ class _MapViewState extends State<MapView> {
       final x = widget.checkpoints[i];
       markerList.add(
         Marker(
-            width: 45,
-            height: 45,
-            point: x.location,
-            builder: (context) => Container(
-                  child: IconButton(
-                    icon: Icon(Icons.location_on),
-                    color: Colors.red,
-                    iconSize: 45,
-                    onPressed: () {
-                      _pageController.jumpToPage(i);
-                    },
-                  ),
-                )),
+          width: 45,
+          height: 45,
+          point: x.location,
+          builder: (context) => Container(
+            child: IconButton(
+              icon: Icon(Icons.location_on),
+              color: Colors.red,
+              iconSize: 45,
+              onPressed: () {
+                _pageController.jumpToPage(i);
+              },
+            ),
+          ),
+        ),
       );
     }
 
@@ -232,7 +233,7 @@ class _MapViewState extends State<MapView> {
         ),
         Container(
           height: 150,
-          padding: EdgeInsets.symmetric(vertical: 24.0),
+          padding: EdgeInsets.symmetric(vertical: 20.0),
           child: PageView.builder(
             controller: _pageController,
             itemCount: widget.checkpoints.length,
@@ -244,7 +245,8 @@ class _MapViewState extends State<MapView> {
             itemBuilder: (context, index) {
               final item = widget.checkpoints[index];
               return Container(
-                padding: EdgeInsets.all(10),
+                padding: EdgeInsets.all(8),
+                alignment: Alignment.center,
                 child: Card(
                   child: ListTile(
                     title: Text(
@@ -258,18 +260,16 @@ class _MapViewState extends State<MapView> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) => Card(
-                          child: ListTile(
-                            title: Text(item.title),
-                            subtitle: Text(item.description),
-                          ),
-                        ),
-                      );
+                      _controller.move(item.location, _controller.zoom);
                     },
                     onLongPress: () {
-                      _controller.move(item.location, _controller.zoom);
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) => ListTile(
+                          title: Text(item.title),
+                          subtitle: Text(item.description),
+                        ),
+                      );
                     },
                     trailing: (widget.index > index
                         ? Icon(Icons.check, color: Colors.green)
