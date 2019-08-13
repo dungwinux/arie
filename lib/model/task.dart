@@ -6,7 +6,7 @@ class Task {
   final String name;
   final String description;
   final List<Checkpoint> checkpoints;
-  final int doneSubtask;
+  int doneSubtask;
   final String creator;
   final DateTime startTime;
   final DateTime endTime;
