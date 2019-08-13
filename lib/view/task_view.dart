@@ -11,6 +11,7 @@ import 'package:slide_countdown_clock/slide_countdown_clock.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class TaskView extends StatelessWidget {
+  // Convert task into Future
   final Task task;
   final bool isAssigned;
 
@@ -138,7 +139,11 @@ class TaskView extends StatelessWidget {
                     title: Text('Something is not right'),
                   ),
                 );
-                await showModalBottomSheet(
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(16))),
+                    isScrollControlled: false,
                     context: context,
                     builder: (context) => FutureBuilder(
                           // TODO: Process different type of checkpoint
@@ -183,6 +188,7 @@ class _MapViewState extends State<MapView> {
         : widget.index;
     // TODO: Convert Description to StreamBuilder
     // TODO: Add last section so that PageView does not overflow
+
     final centerLoc = widget.checkpoints[idx].location;
 
     List<Marker> markerList = <Marker>[];
