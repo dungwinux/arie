@@ -97,6 +97,9 @@ class _TaskListState extends State<TaskList> {
                     ),
                     alignment: Alignment.centerRight,
                   ),
+                  onDismissed: (direction) {
+                    taskDB.deleteTask(BasicTask(id: x.id));
+                  },
                   confirmDismiss: (direction) => showDialog<bool>(
                       context: context,
                       builder: (context) {
@@ -120,36 +123,28 @@ class _TaskListState extends State<TaskList> {
                           ],
                         );
                       }),
-                  onDismissed: (direction) {
-                    taskDB.deleteTask(BasicTask(id: x.id));
-                  },
-                  child: DecoratedBox(
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(24)),
-                    child: ListTile(
-                      contentPadding:
-                          EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-                      title: Text(x.name),
-                      subtitle: Text(
-                        x.description,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TaskView(x, isAssigned: true),
-                          ),
-                        );
-                      },
-                      leading: CircularPercentIndicator(
-                        radius: 48,
-                        percent: (x.percent),
-                        center:
-                            Text('${x.doneSubtask}/${x.checkpoints.length}'),
-                        animation: true,
-                      ),
+                  child: ListTile(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                    title: Text(x.name),
+                    subtitle: Text(
+                      x.description,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TaskView(x, isAssigned: true),
+                        ),
+                      );
+                    },
+                    leading: CircularPercentIndicator(
+                      radius: 48,
+                      percent: (x.percent),
+                      center: Text('${x.doneSubtask}/${x.checkpoints.length}'),
+                      animation: true,
                     ),
                   ),
                 ) as Widget,
