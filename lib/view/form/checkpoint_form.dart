@@ -26,6 +26,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Add support for other type of label
     return Scaffold(
       appBar: AppBar(
         title: Text('Create new checkpoint'),
@@ -141,6 +142,27 @@ class _CheckpointFormState extends State<CheckpointForm> {
                   ),
                 ),
               ],
+            ),
+            Padding(
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2),
+                  ),
+                  labelText: 'Label',
+                ),
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value.isEmpty) return 'Title required';
+                  return null;
+                },
+                onSaved: (String res) {
+                  setState(() {
+                    checkpoint.label = res;
+                  });
+                },
+              ),
+              padding: EdgeInsets.all(16),
             ),
           ],
         ),
