@@ -26,6 +26,8 @@ class _CheckpointFormState extends State<CheckpointForm> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Consider changing to dialog
+    // TODO: Constraint Field Position
     // TODO: Add support for other type of label
     return Scaffold(
       appBar: AppBar(
@@ -46,7 +48,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
         key: _formKey,
         child: ListView(
           children: <Widget>[
-            Padding(
+            Container(
               child: TextFormField(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -69,7 +71,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
               ),
               padding: EdgeInsets.all(16),
             ),
-            Padding(
+            Container(
               child: TextFormField(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -94,60 +96,59 @@ class _CheckpointFormState extends State<CheckpointForm> {
               ),
               padding: EdgeInsets.all(16),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(16),
-                  width: 200,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(width: 2),
-                      ),
-                      labelText: 'Latitude',
-                    ),
-                    initialValue: checkpoint.location.latitude.toString(),
-                    keyboardType: TextInputType.numberWithOptions(
-                        decimal: true, signed: true),
-                    validator: (value) {
-                      if (value.isEmpty) return 'Longitude required';
-                      return null;
-                    },
-                    onSaved: (String res) {
-                      setState(() {
-                        checkpoint.location.latitude = double.tryParse(res);
-                      });
-                    },
+            Container(
+              padding: EdgeInsets.all(16),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2),
                   ),
+                  labelText: 'Latitude',
                 ),
-                Container(
-                  padding: EdgeInsets.all(16),
-                  width: 200,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(width: 2),
-                      ),
-                      labelText: 'Longitude',
-                    ),
-                    initialValue: checkpoint.location.longitude.toString(),
-                    keyboardType: TextInputType.numberWithOptions(
-                        decimal: true, signed: true),
-                    validator: (value) {
-                      if (value.isEmpty) return 'Longitude required';
-                      return null;
-                    },
-                    onSaved: (String res) {
-                      setState(() {
-                        checkpoint.location.longitude = double.tryParse(res);
-                      });
-                    },
-                  ),
-                ),
-              ],
+                initialValue: checkpoint.location.latitude.toString(),
+                keyboardType: TextInputType.numberWithOptions(
+                    decimal: true, signed: true),
+                validator: (value) {
+                  if (value.isEmpty) return 'Latitude required';
+                  double lat = double.tryParse(value);
+                  if (lat > 90 || lat < -90)
+                    return 'Latitude must be between -90 and 90';
+                  return null;
+                },
+                onSaved: (String res) {
+                  setState(() {
+                    checkpoint.location.latitude = double.tryParse(res);
+                  });
+                },
+              ),
             ),
-            Padding(
+            Container(
+              padding: EdgeInsets.all(16),
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2),
+                  ),
+                  labelText: 'Longitude',
+                ),
+                initialValue: checkpoint.location.longitude.toString(),
+                keyboardType: TextInputType.numberWithOptions(
+                    decimal: true, signed: true),
+                validator: (value) {
+                  if (value.isEmpty) return 'Longitude required';
+                  double long = double.tryParse(value);
+                  if (long > 120 || long < -120)
+                    return 'Longitude must be between -120 and 120';
+                  return null;
+                },
+                onSaved: (String res) {
+                  setState(() {
+                    checkpoint.location.longitude = double.tryParse(res);
+                  });
+                },
+              ),
+            ),
+            Container(
               child: TextFormField(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(

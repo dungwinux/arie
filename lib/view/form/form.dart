@@ -43,10 +43,9 @@ class _TaskFormState extends State<TaskForm> {
               subtitle: Text(x.description),
               onTap: () async {
                 final Checkpoint result =
-                    await showModalBottomSheet<Checkpoint>(
-                  context: context,
+                    await Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => CheckpointForm(checkpoint: x),
-                );
+                ));
                 if (result != null)
                   setState(() {
                     _task.checkpoints[index] = result;
@@ -191,10 +190,10 @@ class _TaskFormState extends State<TaskForm> {
           FlatButton(
             child: Text('Add checkpoint'),
             onPressed: () async {
-              final Checkpoint result = await showModalBottomSheet<Checkpoint>(
-                context: context,
+              final Checkpoint result =
+                  await Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => CheckpointForm(),
-              );
+              ));
               if (result != null)
                 setState(() {
                   _task.checkpoints.add(result);
