@@ -86,8 +86,8 @@ class TaskView extends StatelessWidget {
     return null;
   }
 
-  // TODO: Add progress graph
-  // TODO: Change how task_view opened in Search
+  // TODO: [High] Add progress graph
+  // TODO: [Low] Change how task_view opened in Search
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +192,7 @@ class TaskView extends StatelessWidget {
                     isScrollControlled: false,
                     context: context,
                     builder: (context) => FutureBuilder(
-                          // TODO: Process different type of checkpoint
+                          // TODO: [High] Process different type of checkpoint
                           future: _futureResult,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
@@ -228,12 +228,13 @@ class _MapViewState extends State<MapView> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Set default page
+    // TODO: [Medium] Set default page
     final idx = widget.checkpoints.length == widget.index
         ? widget.checkpoints.length - 1
         : widget.index;
-    // TODO: Update map when checkpoint is completed
-    // TODO: Add last section so that PageView does not overflow
+    // TODO: [High] Update map when checkpoint is completed
+    // TODO: [Low] Add last section so that PageView does not overflow
+    // TODO: [High] Make map interactive again (perhaps via new screen)
 
     final centerLoc = widget.checkpoints[idx].location;
 
@@ -267,7 +268,7 @@ class _MapViewState extends State<MapView> {
             options: MapOptions(center: centerLoc, zoom: 12.5),
             mapController: _controller,
             layers: [
-              // TODO: Change map provider
+              // TODO: [Low] Change map provider
               TileLayerOptions(
                 urlTemplate:
                     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',

@@ -26,7 +26,6 @@ class AppDatabase extends _$AppDatabase {
   Future<List<BasicTask>> getAllTasks() => select(basicTasks).get();
   Stream<List<BasicTask>> watchAllTasks() => select(basicTasks).watch();
 
-  // TODO: Add method for Task, beside BasicTask
   Future insertTask(BasicTask task) => into(basicTasks).insert(task);
   Future updateTask(BasicTask task) => update(basicTasks).replace(task);
   Future deleteTask(BasicTask task) => delete(basicTasks).delete(task);

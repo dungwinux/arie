@@ -6,7 +6,7 @@ import 'package:arie/view/task_view.dart';
 import 'package:flutter/material.dart';
 
 class SearchMenuDelegate extends SearchDelegate<Task> {
-  // TODO: Add History
+  // TODO: [Low] Add History
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -54,6 +54,7 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
   @override
   Widget buildResults(BuildContext context) {
     final _searchResult = TaskFetch.fetchAll(query);
+    // TODO: [High] Convert to flutter_pagewise (pub_get)
     return FutureBuilder(
       future: _searchResult,
       builder: (context, snapshot) {

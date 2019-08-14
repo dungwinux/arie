@@ -204,7 +204,7 @@ class _TaskFormState extends State<TaskForm> {
             child: RaisedButton(
               child: Text('Submit'),
               onPressed: () async {
-                // TODO: Add alert
+                // TODO: [High] Add alert and loading dialog
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
                   try {

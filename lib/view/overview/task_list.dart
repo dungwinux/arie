@@ -13,8 +13,6 @@ class TaskList extends StatefulWidget {
   _TaskListState createState() => _TaskListState();
 }
 
-// TODO: Move FutureBuilder to Overview
-
 class _TaskListState extends State<TaskList> {
   Stream<List<Task>> _data;
 
@@ -32,13 +30,12 @@ class _TaskListState extends State<TaskList> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Add animation using AnimatedList
     return StreamBuilder(
       stream: _data,
       builder: (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasError)
-            // TODO: Add 'tap to retry'
+            // TODO: [High] Add 'tap to retry'
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -149,7 +146,6 @@ class OverallProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
       padding: EdgeInsets.all(20),
       child: CircularPercentIndicator(

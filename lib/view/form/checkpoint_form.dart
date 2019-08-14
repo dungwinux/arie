@@ -26,9 +26,10 @@ class _CheckpointFormState extends State<CheckpointForm> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Consider changing to dialog
-    // TODO: Constraint Field Position
-    // TODO: Add support for other type of label
+    // TODO: [Low] Consider changing to dialog
+    // TODO: [Low] Constraint Field Position
+    // TODO: [High] Add support for other type of label
+    // TODO: [High] Change label input to picture
     return Scaffold(
       appBar: AppBar(
         title: Text('Checkpoint editor'),
@@ -137,8 +138,8 @@ class _CheckpointFormState extends State<CheckpointForm> {
                 validator: (value) {
                   if (value.isEmpty) return 'Longitude required';
                   double long = double.tryParse(value);
-                  if (long > 120 || long < -120)
-                    return 'Longitude must be between -120 and 120';
+                  if (long > 180 || long < -180)
+                    return 'Longitude must be between -180 and 180';
                   return null;
                 },
                 onSaved: (String res) {

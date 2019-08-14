@@ -6,12 +6,13 @@ import 'package:flutter/material.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // TODO: [Low] Dark theme
     return MaterialApp(
       title: 'Arie',
       theme: ThemeData(
+        // TODO: [Medium] Change theme
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(),
@@ -28,7 +29,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    // TODO: Change to SliverAppBar
+    // TODO: [Low] Change to SliverAppBar
     return Scaffold(
       body: Overview(),      
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

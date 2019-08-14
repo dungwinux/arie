@@ -19,7 +19,6 @@ class TaskFetch {
 
     try {
       final rawResult = await http.get(url);
-      // TODO: Error handling
       final List<Task> output = (jsonDecode(rawResult.body) as Iterable)
           .map((x) => Task.fromJson(x))
           .toList();
