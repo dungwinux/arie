@@ -30,13 +30,26 @@ class _TaskFormState extends State<TaskForm> {
   Widget _renderCheckpoints() {
     // TODO: Convert to Stepper
     final tileList = _task.checkpoints
-        .map((Checkpoint x) => ListTile(
-              title: Text(x.title),
-              subtitle: Text(x.description),
-              onTap: () {
-                // Open Editor
-              },
+        .asMap()
+        .map((int index, Checkpoint x) => MapEntry(
+              index,
+              ListTile(
+                title: Text(x.title),
+                subtitle: Text(x.description),
+                onTap: () async {
+                  final Checkpoint result =
+                      await showModalBottomSheet<Checkpoint>(
+                    context: context,
+                    builder: (context) => CheckpointForm(checkpoint: x),
+                  );
+                  if (result != null)
+                    setState(() {
+                      _task.checkpoints[index] = result;
+                    });
+                },
+              ),
             ))
+        .values
         .toList();
     return Column(
       children: tileList,

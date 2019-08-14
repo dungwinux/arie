@@ -29,7 +29,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
     // TODO: Add support for other type of label
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create new checkpoint'),
+        title: Text('Checkpoint editor'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
@@ -60,6 +60,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
                   if (value.isEmpty) return 'Title required';
                   return null;
                 },
+                initialValue: checkpoint.title,
                 onSaved: (String res) {
                   setState(() {
                     checkpoint.title = res;
@@ -80,6 +81,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
                 keyboardType: TextInputType.text,
                 maxLengthEnforced: true,
                 maxLength: 40,
+                initialValue: checkpoint.description,
                 validator: (value) {
                   if (value.isEmpty) return 'Description required';
                   return null;
@@ -105,6 +107,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
                       ),
                       labelText: 'Latitude',
                     ),
+                    initialValue: checkpoint.location.latitude.toString(),
                     keyboardType: TextInputType.numberWithOptions(
                         decimal: true, signed: true),
                     validator: (value) {
@@ -128,6 +131,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
                       ),
                       labelText: 'Longitude',
                     ),
+                    initialValue: checkpoint.location.longitude.toString(),
                     keyboardType: TextInputType.numberWithOptions(
                         decimal: true, signed: true),
                     validator: (value) {
@@ -151,6 +155,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
                   ),
                   labelText: 'Label',
                 ),
+                initialValue: checkpoint.label,
                 keyboardType: TextInputType.text,
                 validator: (value) {
                   if (value.isEmpty) return 'Title required';
