@@ -224,7 +224,7 @@ class MapView extends StatefulWidget {
 
 class _MapViewState extends State<MapView> {
   final _controller = MapController();
-  final _pageController = PageController(viewportFraction: 0.7);
+  final _pageController = PageController(viewportFraction: 0.8);
 
   @override
   Widget build(BuildContext context) {
@@ -234,7 +234,6 @@ class _MapViewState extends State<MapView> {
         : widget.index;
     // TODO: [High] Update map when checkpoint is completed
     // TODO: [Low] Add last section so that PageView does not overflow
-    // TODO: [High] Make map interactive again (perhaps via new screen)
 
     final centerLoc = widget.checkpoints[idx].location;
 
@@ -261,11 +260,12 @@ class _MapViewState extends State<MapView> {
     }
 
     return Stack(
+      alignment: Alignment.bottomCenter,
       children: <Widget>[
         Container(
           height: 300,
           child: FlutterMap(
-            options: MapOptions(center: centerLoc, zoom: 12.5),
+            options: MapOptions(center: centerLoc, zoom: 12),
             mapController: _controller,
             layers: [
               // TODO: [Low] Change map provider
@@ -279,8 +279,8 @@ class _MapViewState extends State<MapView> {
           ),
         ),
         Container(
-          height: 300,
-          padding: EdgeInsets.symmetric(vertical: 20.0),
+          height: 100,
+          padding: EdgeInsets.symmetric(vertical: 4),
           child: PageView.builder(
             controller: _pageController,
             itemCount: widget.checkpoints.length,
@@ -292,10 +292,20 @@ class _MapViewState extends State<MapView> {
             itemBuilder: (context, index) {
               final item = widget.checkpoints[index];
               return Container(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(4),
                 alignment: Alignment.bottomCenter,
                 child: Card(
                   child: ListTile(
+                    leading: SizedBox.fromSize(
+                      size: Size.square(36),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          (index + 1).toString(),
+                          style: TextStyle(fontSize: 24),
+                        ),
+                      ),
+                    ),
                     title: Text(
                       item.title,
                       maxLines: 1,
