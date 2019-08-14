@@ -6,13 +6,17 @@ import 'package:arie/model/task.dart';
 class TaskFetch {
   static final _serverHost = 'arie-backend.herokuapp.com';
 
-  static Future<List<Task>> fetchAll(String query) async {
+  static Future<List<Task>> fetchAll(
+    String query, {
+    int index = 0,
+    int count = 10,
+  }) async {
     final Uri url = Uri.https(
       _serverHost,
       '/api/tasks/',
       {
-        'count': '10',
-        'idx': '0',
+        'count': count.toString(),
+        'idx': index.toString(),
         'q': jsonEncode({'name': query})
       },
     );

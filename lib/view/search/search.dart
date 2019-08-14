@@ -4,6 +4,7 @@ import 'package:arie/model/database.dart';
 import 'package:arie/model/task.dart';
 import 'package:arie/view/task_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pagewise/flutter_pagewise.dart';
 
 class SearchMenuDelegate extends SearchDelegate<Task> {
   // TODO: [Low] Add History
@@ -53,94 +54,68 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
 
   @override
   Widget buildResults(BuildContext context) {
-    final _searchResult = TaskFetch.fetchAll(query);
-    // TODO: [High] Convert to flutter_pagewise (pub_get)
-    return FutureBuilder(
-      future: _searchResult,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.sentiment_dissatisfied,
-                    size: 100,
-                    color: Colors.black38,
-                  ),
-                  Text(
-                    'Something is not right: ${snapshot.error}',
-                    style: TextStyle(color: Colors.black38),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            List<Task> _tasks = snapshot.data;
-            if (_tasks.isEmpty)
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.sentiment_dissatisfied,
-                      size: 100,
-                      color: Colors.black38,
-                    ),
-                    Text(
-                      'No result found',
-                      style: TextStyle(color: Colors.black38),
-                    ),
-                  ],
-                ),
+    return PagewiseListView(
+      pageSize: 10,
+      pageFuture: (int pageIndex) {
+        return TaskFetch.fetchAll(query, index: 1 + pageIndex * 10);
+      },
+      retryBuilder: (context, callback) {
+        // TODO: [Low] Change RaisedButton
+        return RaisedButton(child: Text('Retry'), onPressed: () => callback());
+      },
+      noItemsFoundBuilder: (context) {
+        return Column(
+          children: <Widget>[
+            Icon(
+              Icons.sentiment_dissatisfied,
+              size: 100,
+              color: Colors.black38,
+            ),
+            Text(
+              'No result found',
+              style: TextStyle(color: Colors.black38),
+            ),
+          ],
+        );
+      },
+      itemBuilder: (context, Task _task, int index) {
+        return Card(
+          child: ListTile(
+            title: Text(
+              _task.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(
+              'by ${_task.creator}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            onTap: () {
+              showBottomSheet(
+                context: context,
+                builder: (context) => TaskView(_task),
               );
-            return ListView.builder(
-              itemCount: _tasks.length,
-              itemBuilder: (context, index) => Card(
-                child: ListTile(
-                  title: Text(
-                    _tasks[index].name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(
-                    'by ${_tasks[index].creator}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  onTap: () {
-                    showBottomSheet(
-                      context: context,
-                      builder: (context) => TaskView(_tasks[index]),
-                    );
-                  },
-                  trailing: IconButton(
-                    icon: Icon(Icons.send),
-                    onPressed: () async {
-                      if (await taskDB
-                          .isTaskExist(BasicTask(id: _tasks[index].id)))
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text(
-                                '${_tasks[index].name} was already added')));
-                      else
-                        try {
-                          await taskDB.insertTask(_tasks[index].toBasicTask());
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                              content: Text('Added ${_tasks[index].name}')));
-                        } catch (e) {
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                              content: Text('Something is not right: $e')));
-                        }
-                    },
-                  ),
-                ),
-              ),
-            );
-          }
-        } else {
-          return Center(child: CircularProgressIndicator());
-        }
+            },
+            trailing: IconButton(
+              icon: Icon(Icons.send),
+              onPressed: () async {
+                if (await taskDB.isTaskExist(BasicTask(id: _task.id)))
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text('${_task.name} was already added')));
+                else
+                  try {
+                    await taskDB.insertTask(_task.toBasicTask());
+                    Scaffold.of(context).showSnackBar(
+                        SnackBar(content: Text('Added ${_task.name}')));
+                  } catch (e) {
+                    Scaffold.of(context).showSnackBar(
+                        SnackBar(content: Text('Something is not right: $e')));
+                  }
+              },
+            ),
+          ),
+        );
       },
     );
   }
