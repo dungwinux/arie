@@ -131,7 +131,7 @@ class TaskView extends StatelessWidget {
                   ),
                 );
                 if (confirmDelete) {
-                  taskDB.deleteTask(BasicTask(id: task.id));
+                  taskDB.deleteTask(task.toBasicTask());
                   Navigator.of(context).pop();
                 } else {
                   return;
@@ -169,8 +169,8 @@ class TaskView extends StatelessWidget {
                   }
                   if (res.any(
                       (x) => x == task.checkpoints[task.doneSubtask].label)) {
-                    await taskDB.updateTask(
-                        BasicTask(id: task.id, progress: task.doneSubtask + 1));
+                    task.doneSubtask += 1;
+                    await taskDB.updateTask(task.toBasicTask());
                     return ListTile(
                       title: Text('Correct answer'),
                     );

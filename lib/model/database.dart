@@ -4,7 +4,14 @@ part 'database.g.dart';
 class BasicTasks extends Table {
   TextColumn get id =>
       text().customConstraint('UNIQUE').withLength(max: 24, min: 24)();
-  IntColumn get progress => integer().withDefault(Constant(0))();
+  IntColumn get doneSubtask => integer().withDefault(Constant(0))();
+  TextColumn get name => text()();
+  TextColumn get description => text()();
+  TextColumn get creator => text()();
+  DateTimeColumn get createTime => dateTime()();
+  DateTimeColumn get startTime => dateTime()();
+  DateTimeColumn get endTime => dateTime()();
+  TextColumn get checkpointList => text()();
 
   @override
   Set<TextColumn> get primaryKey => {id};

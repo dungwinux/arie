@@ -26,15 +26,8 @@ class _TaskListState extends State<TaskList> {
 
   // Consider switch from Stream to Future
   Stream<List<Task>> _fetchData() {
-    return taskDB.watchAllTasks().asyncMap(
-          (List<BasicTask> task) async => Future.wait(task.map(
-            (x) => TaskFetch
-                    // Fetch data from server
-                    .fetch(x.id)
-                // Merge with local data
-                .then((res) => res..doneSubtask = x.progress),
-          )),
-        );
+    return taskDB.watchAllTasks().map((List<BasicTask> taskList) =>
+        taskList.map((BasicTask task) => Task.fromBasicTask(task)).toList());
   }
 
   @override

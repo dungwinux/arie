@@ -1,16 +1,19 @@
+import 'dart:convert';
+
 import 'package:arie/model/checkpoint.dart';
+import 'package:arie/model/database.dart';
 import 'package:flutter/foundation.dart';
 
 class Task {
-  final String id;
-  final String name;
-  final String description;
-  final List<Checkpoint> checkpoints;
+  String id;
+  String name;
+  String description;
+  List<Checkpoint> checkpoints;
   int doneSubtask;
-  final String creator;
-  final DateTime startTime;
-  final DateTime endTime;
-  final DateTime createTime;
+  String creator;
+  DateTime startTime;
+  DateTime endTime;
+  DateTime createTime;
 
   Task(
       {@required this.name,
@@ -48,10 +51,32 @@ class Task {
         'checkpoints': checkpoints.map((Checkpoint x) => x.toJson()),
       };
 
-  double get percent => (doneSubtask / checkpoints.length);
+  Task.fromBasicTask(BasicTask task)
+      : name = task.name,
+        id = task.id,
+        creator = task.creator,
+        description = task.description,
+        createTime = task.createTime,
+        startTime = task.startTime,
+        endTime = task.endTime,
+        doneSubtask = task.doneSubtask,
+        checkpoints = (jsonDecode(task.checkpointList) as Iterable)
+            .map((x) => Checkpoint.fromJson(x))
+            .toList();
 
-  // TODO: Implement isCompletedToday
-  // bool get isCompletedToday
+  BasicTask toBasicTask() => BasicTask(
+        name: name,
+        id: id,
+        creator: creator,
+        description: description,
+        createTime: createTime,
+        startTime: startTime,
+        endTime: endTime,
+        doneSubtask: doneSubtask,
+        checkpointList: jsonEncode(checkpoints),
+      );
+
+  double get percent => (doneSubtask / checkpoints.length);
 }
 
 class SubmitTask {

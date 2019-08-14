@@ -9,7 +9,6 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
   // TODO: Add History
   @override
   List<Widget> buildActions(BuildContext context) {
-    // TODO: implement buildActions
     return [
       IconButton(
         icon: Icon(Icons.clear),
@@ -22,7 +21,6 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
 
   @override
   Widget buildLeading(BuildContext context) {
-    // TODO: implement buildLeading
     return IconButton(
       tooltip: 'Back',
       icon: Icon(Icons.arrow_back),
@@ -119,15 +117,14 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
                   trailing: IconButton(
                     icon: Icon(Icons.send),
                     onPressed: () async {
-                      final sendTask =
-                          BasicTask(id: _tasks[index].id, progress: 0);
-                      if (await taskDB.isTaskExist(sendTask))
+                      if (await taskDB
+                          .isTaskExist(BasicTask(id: _tasks[index].id)))
                         Scaffold.of(context).showSnackBar(SnackBar(
                             content: Text(
                                 '${_tasks[index].name} was already added')));
                       else
                         try {
-                          await taskDB.insertTask(sendTask);
+                          await taskDB.insertTask(_tasks[index].toBasicTask());
                           Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text('Added ${_tasks[index].name}')));
                         } catch (e) {
