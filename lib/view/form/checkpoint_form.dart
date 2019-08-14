@@ -160,11 +160,12 @@ class _CheckpointFormState extends State<CheckpointForm> {
                 initialValue: checkpoint.label,
                 keyboardType: TextInputType.text,
                 validator: (value) {
-                  if (value.isEmpty) return 'Title required';
+                  if (value.isEmpty) return 'Label required';
                   return null;
                 },
                 onSaved: (String res) {
                   setState(() {
+                    // TODO: [Medium] Hash label
                     checkpoint.label = res;
                   });
                 },
