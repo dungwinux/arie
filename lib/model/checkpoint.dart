@@ -33,4 +33,5 @@ class Checkpoint {
         'longitude': location.longitude,
         'latitude': location.latitude
       };
+  // TODO: Hash label ?
 }

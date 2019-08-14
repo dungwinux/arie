@@ -112,7 +112,7 @@ class TaskView extends StatelessWidget {
                 final bool confirmDelete = await showDialog<bool>(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text('Are you sure you want to delete ?'),
+                    title: Text('Are you sure ?'),
                     content: Text('The following action is irreversible!'),
                     actions: <Widget>[
                       FlatButton(
@@ -232,7 +232,7 @@ class _MapViewState extends State<MapView> {
     final idx = widget.checkpoints.length == widget.index
         ? widget.checkpoints.length - 1
         : widget.index;
-    // TODO: Convert Description to StreamBuilder
+    // TODO: Update map when checkpoint is completed
     // TODO: Add last section so that PageView does not overflow
 
     final centerLoc = widget.checkpoints[idx].location;
@@ -282,7 +282,7 @@ class _MapViewState extends State<MapView> {
           padding: EdgeInsets.symmetric(vertical: 20.0),
           child: PageView.builder(
             controller: _pageController,
-            itemCount: widget.checkpoints.length,
+            itemCount: widget.checkpoints.length + 1,
             physics: BouncingScrollPhysics(),
             onPageChanged: (int index) {
               _controller.move(
