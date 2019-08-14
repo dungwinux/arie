@@ -283,7 +283,7 @@ class _MapViewState extends State<MapView> {
           padding: EdgeInsets.symmetric(vertical: 20.0),
           child: PageView.builder(
             controller: _pageController,
-            itemCount: widget.checkpoints.length + 1,
+            itemCount: widget.checkpoints.length,
             physics: BouncingScrollPhysics(),
             onPageChanged: (int index) {
               _controller.move(
