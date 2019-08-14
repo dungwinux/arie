@@ -1,11 +1,11 @@
 import 'package:latlong/latlong.dart';
 
 class Checkpoint {
-  final String title;
-  final String description;
-  final String label;
-  final String type;
-  final LatLng location;
+  String title;
+  String description;
+  String label;
+  String type;
+  LatLng location;
 
   Checkpoint({
     this.title,

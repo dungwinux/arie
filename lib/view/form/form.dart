@@ -1,5 +1,6 @@
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
+import 'package:arie/view/form/checkpoint_form.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -43,9 +44,6 @@ class _TaskFormState extends State<TaskForm> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Add all field
-    // TODO: Add submit button
-
     final _dateTimeFormat = DateFormat('EE, MMM d, y hh:mm');
     final Future<DateTime> Function(BuildContext, DateTime) _onShowPicker =
         (context, currentValue) async {
@@ -172,8 +170,15 @@ class _TaskFormState extends State<TaskForm> {
           _renderCheckpoints(),
           FlatButton(
             child: Text('Add checkpoint'),
-            onPressed: () {
-              // Call add checkpoint
+            onPressed: () async {
+              final Checkpoint result = await showModalBottomSheet<Checkpoint>(
+                context: context,
+                builder: (context) => CheckpointForm(),
+              );
+              if (result != null)
+                setState(() {
+                  _task.checkpoints.add(result);
+                });
             },
           ),
           Padding(
