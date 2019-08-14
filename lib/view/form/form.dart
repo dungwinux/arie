@@ -1,4 +1,6 @@
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class FormPage extends StatelessWidget {
   @override
@@ -22,8 +24,28 @@ class _TaskFormState extends State<TaskForm> {
   @override
   Widget build(BuildContext context) {
     // TODO: Add all field
-    // TODO: Add DateTime field
     // TODO: Add submit button
+
+    final _dateTimeFormat = DateFormat('EE, MMM d, y hh:mm');
+    final Future<DateTime> Function(BuildContext, DateTime) _onShowPicker =
+        (context, currentValue) async {
+      final newDate = await showDatePicker(
+        context: context,
+        initialDate: currentValue ?? DateTime.now(),
+        firstDate: DateTime(1900),
+        lastDate: DateTime(2100),
+      );
+      if (newDate != null) {
+        final newTime = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+        );
+        return DateTimeField.combine(newDate, newTime);
+      } else {
+        return currentValue;
+      }
+    };
+
     return Form(
       key: _formKey,
       child: Column(
@@ -47,8 +69,30 @@ class _TaskFormState extends State<TaskForm> {
             padding: EdgeInsets.all(16),
           ),
           Padding(
-            child: Row(
-              children: <Widget>[],
+            child: DateTimeField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(width: 2),
+                ),
+                labelText: 'Start time',
+              ),
+              format: _dateTimeFormat,
+              readOnly: true,
+              onShowPicker: _onShowPicker,
+            ),
+            padding: EdgeInsets.all(16),
+          ),
+          Padding(
+            child: DateTimeField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(width: 2),
+                ),
+                labelText: 'End time',
+              ),
+              format: _dateTimeFormat,
+              readOnly: true,
+              onShowPicker: _onShowPicker,
             ),
             padding: EdgeInsets.all(16),
           ),
