@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:arie/model/task.dart';
 
 class TaskFetch {
-  final _serverHost = 'arie-backend.herokuapp.com';
+  static final _serverHost = 'arie-backend.herokuapp.com';
 
-  Future<List<Task>> fetchAll(String query) async {
+  static Future<List<Task>> fetchAll(String query) async {
     final Uri url = Uri.https(
       _serverHost,
       '/api/tasks/',
@@ -29,7 +29,7 @@ class TaskFetch {
     }
   }
 
-  Future<Task> fetch(String id) async {
+  static Future<Task> fetch(String id) async {
     final Uri url = Uri.https(
       _serverHost,
       '/api/tasks/$id',
@@ -40,6 +40,19 @@ class TaskFetch {
       return output;
     } catch (e) {
       return Future.error('Failed to get data from server');
+    }
+  }
+
+  static Future<bool> send(SubmitTask task) async {
+    final Uri url = Uri.https(
+      _serverHost,
+      '/api/tasks/',
+    );
+    try {
+      final respond = await http.post(url, body: task.toJson());
+      return respond.statusCode == 200;
+    } catch (e) {
+      return Future.error('Failed to send data to server');
     }
   }
 }

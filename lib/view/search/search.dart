@@ -55,7 +55,7 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
 
   @override
   Widget buildResults(BuildContext context) {
-    final _searchResult = TaskFetch().fetchAll(query);
+    final _searchResult = TaskFetch.fetchAll(query);
     return FutureBuilder(
       future: _searchResult,
       builder: (context, snapshot) {

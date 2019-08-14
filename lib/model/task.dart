@@ -61,4 +61,12 @@ class SubmitTask {
   DateTime startTime;
   DateTime endTime;
   List<Checkpoint> checkpoints = <Checkpoint>[];
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'creator': creator,
+        'description': description,
+        'startTime': startTime.toIso8601String(),
+        'endTime': endTime.toIso8601String(),
+        'checkpoints': checkpoints.map((Checkpoint x) => x.toJson()),
+      };
 }
