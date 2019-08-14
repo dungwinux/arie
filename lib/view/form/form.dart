@@ -28,29 +28,35 @@ class _TaskFormState extends State<TaskForm> {
   final _task = SubmitTask(creator: 'Anonymous', checkpoints: []);
 
   Widget _renderCheckpoints() {
-    // TODO: Convert to Stepper
-    final tileList = _task.checkpoints
-        .asMap()
-        .map((int index, Checkpoint x) => MapEntry(
-              index,
-              ListTile(
-                title: Text(x.title),
-                subtitle: Text(x.description),
-                onTap: () async {
-                  final Checkpoint result =
-                      await showModalBottomSheet<Checkpoint>(
-                    context: context,
-                    builder: (context) => CheckpointForm(checkpoint: x),
-                  );
-                  if (result != null)
-                    setState(() {
-                      _task.checkpoints[index] = result;
-                    });
-                },
-              ),
-            ))
-        .values
-        .toList();
+    List<Widget> tileList = [];
+    for (int index = 0; index < _task.checkpoints.length; index++) {
+      final x = _task.checkpoints[index];
+      tileList.add(
+        Dismissible(
+          key: Key(x.hashCode.toString()),
+          onDismissed: (direction) {
+            _task.checkpoints.removeAt(index);
+          },
+          child: Card(
+            child: ListTile(
+              title: Text(x.title),
+              subtitle: Text(x.description),
+              onTap: () async {
+                final Checkpoint result =
+                    await showModalBottomSheet<Checkpoint>(
+                  context: context,
+                  builder: (context) => CheckpointForm(checkpoint: x),
+                );
+                if (result != null)
+                  setState(() {
+                    _task.checkpoints[index] = result;
+                  });
+              },
+            ),
+          ),
+        ),
+      );
+    }
     return Column(
       children: tileList,
     );
