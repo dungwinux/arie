@@ -25,6 +25,7 @@ class _TaskFormState extends State<TaskForm> {
   final _task = <String, dynamic>{
     'name': null,
     'id': null,
+    'description': '',
     'creator': null,
     'createTime': null,
     'checkpoints': [],
@@ -91,9 +92,14 @@ class _TaskFormState extends State<TaskForm> {
                 ),
                 labelText: 'Start time',
               ),
-              onChanged: (DateTime date) {
+              onChanged: (DateTime time) {
                 setState(() {
-                  _task['startTime'] = date;
+                  _task['startTime'] = time;
+                });
+              },
+              onSaved: (DateTime time) {
+                setState(() {
+                  _task['startTime'] = time.toIso8601String();
                 });
               },
               validator: (DateTime time) {
@@ -115,9 +121,14 @@ class _TaskFormState extends State<TaskForm> {
                 labelText: 'End time',
               ),
               enabled: (_task['startTime'] != null),
-              onChanged: (DateTime date) {
+              onChanged: (DateTime time) {
                 setState(() {
-                  _task['endTime'] = date;
+                  _task['endTime'] = time;
+                });
+              },
+              onSaved: (DateTime time) {
+                setState(() {
+                  _task['startTime'] = time.toIso8601String();
                 });
               },
               validator: (DateTime time) {
@@ -131,6 +142,31 @@ class _TaskFormState extends State<TaskForm> {
               format: _dateTimeFormat,
               readOnly: true,
               onShowPicker: _onShowPicker,
+            ),
+            padding: EdgeInsets.all(16),
+          ),
+          Padding(
+            child: TextFormField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(width: 2),
+                ),
+                hintText: 'Description goes here',
+                labelText: 'Description',
+              ),
+              keyboardType: TextInputType.multiline,
+              maxLines: 5,
+              maxLengthEnforced: true,
+              maxLength: 150,
+              validator: (value) {
+                if (value.isEmpty) return 'Description required';
+                return null;
+              },
+              onSaved: (String res) {
+                setState(() {
+                  _task['description'] = res;
+                });
+              },
             ),
             padding: EdgeInsets.all(16),
           ),
