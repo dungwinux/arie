@@ -87,7 +87,7 @@ class TaskView extends StatelessWidget {
   }
 
   // TODO: Add progress graph
-  // TODO: Add Map for checkpoint list
+  // TODO: Change how task_view opened in Search
 
   @override
   Widget build(BuildContext context) {
