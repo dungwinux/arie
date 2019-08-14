@@ -32,7 +32,7 @@ class TaskFetch {
   static Future<Task> fetch(String id) async {
     final Uri url = Uri.https(
       _serverHost,
-      '/api/tasks/$id',
+      '/api/tasks/$id/',
     );
     try {
       final rawResult = await http.get(url);
@@ -48,8 +48,18 @@ class TaskFetch {
       _serverHost,
       '/api/tasks/',
     );
+    final content = json.encode(task.toJson(), toEncodable: (dynamic item) {
+      if (item is DateTime)
+        return item.toIso8601String();
+      else
+        return item.toJson();
+    });
     try {
-      final respond = await http.post(url, body: task.toJson());
+      final respond = await http.post(
+        url,
+        body: content,
+        headers: {'Content-Type': 'application/json'},
+      );
       return respond.statusCode == 200;
     } catch (e) {
       return Future.error('Failed to send data to server');

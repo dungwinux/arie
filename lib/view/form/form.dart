@@ -1,3 +1,4 @@
+import 'package:arie/controller/task_fetch.dart';
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
 import 'package:arie/view/form/checkpoint_form.dart';
@@ -24,7 +25,7 @@ class TaskForm extends StatefulWidget {
 
 class _TaskFormState extends State<TaskForm> {
   final _formKey = GlobalKey<FormState>();
-  final _task = SubmitTask();
+  final _task = SubmitTask(creator: 'Anonymous', checkpoints: []);
 
   Widget _renderCheckpoints() {
     // TODO: Convert to Stepper
@@ -184,12 +185,26 @@ class _TaskFormState extends State<TaskForm> {
           Padding(
             child: RaisedButton(
               child: Text('Submit'),
-              onPressed: () {
+              onPressed: () async {
                 // TODO: Add alert
                 if (_formKey.currentState.validate()) {
-                  Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text('Success'),
-                  ));
+                  _formKey.currentState.save();
+                  try {
+                    final sendSuccess = await TaskFetch.send(_task);
+                    if (sendSuccess) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('Success'),
+                      ));
+                    } else {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('Server was unable to receive task'),
+                      ));
+                    }
+                  } catch (e) {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text('Error: $e'),
+                    ));
+                  }
                 }
               },
             ),
