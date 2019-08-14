@@ -1,3 +1,4 @@
+import 'package:arie/model/task.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -21,6 +22,15 @@ class TaskForm extends StatefulWidget {
 
 class _TaskFormState extends State<TaskForm> {
   final _formKey = GlobalKey<FormState>();
+  final _task = <String, dynamic>{
+    'name': null,
+    'id': null,
+    'creator': null,
+    'createTime': null,
+    'checkpoints': [],
+    'endTime': null,
+    'startTime': null
+  };
   @override
   Widget build(BuildContext context) {
     // TODO: Add all field
@@ -48,7 +58,7 @@ class _TaskFormState extends State<TaskForm> {
 
     return Form(
       key: _formKey,
-      child: Column(
+      child: ListView(
         children: <Widget>[
           Padding(
             child: TextFormField(
@@ -65,6 +75,11 @@ class _TaskFormState extends State<TaskForm> {
                 if (value.isEmpty) return 'Name required';
                 return null;
               },
+              onSaved: (String res) {
+                setState(() {
+                  _task['name'] = res;
+                });
+              },
             ),
             padding: EdgeInsets.all(16),
           ),
@@ -76,6 +91,15 @@ class _TaskFormState extends State<TaskForm> {
                 ),
                 labelText: 'Start time',
               ),
+              onChanged: (DateTime date) {
+                setState(() {
+                  _task['startTime'] = date;
+                });
+              },
+              validator: (DateTime time) {
+                if (time == null) return 'Start time is required';
+                return null;
+              },
               format: _dateTimeFormat,
               readOnly: true,
               onShowPicker: _onShowPicker,
@@ -90,9 +114,36 @@ class _TaskFormState extends State<TaskForm> {
                 ),
                 labelText: 'End time',
               ),
+              enabled: (_task['startTime'] != null),
+              onChanged: (DateTime date) {
+                setState(() {
+                  _task['endTime'] = date;
+                });
+              },
+              validator: (DateTime time) {
+                if (time == null) return 'End time is required';
+                DateTime startTime = _task['startTime'];
+                if (startTime != null && startTime.isBefore(time))
+                  return null;
+                else
+                  return 'End time must be after startTime';
+              },
               format: _dateTimeFormat,
               readOnly: true,
               onShowPicker: _onShowPicker,
+            ),
+            padding: EdgeInsets.all(16),
+          ),
+          Padding(
+            child: RaisedButton(
+              child: Text('Submit'),
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text('Success'),
+                  ));
+                }
+              },
             ),
             padding: EdgeInsets.all(16),
           ),
