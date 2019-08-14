@@ -53,3 +53,12 @@ class Task {
   // TODO: Implement isCompletedToday
   // bool get isCompletedToday
 }
+
+class SubmitTask {
+  String name;
+  String description;
+  String creator;
+  DateTime startTime;
+  DateTime endTime;
+  List<Checkpoint> checkpoints = <Checkpoint>[];
+}

@@ -23,19 +23,11 @@ class TaskForm extends StatefulWidget {
 
 class _TaskFormState extends State<TaskForm> {
   final _formKey = GlobalKey<FormState>();
-  final _task = <String, dynamic>{
-    'name': null,
-    'description': '',
-    'creator': null,
-    'createTime': null,
-    'checkpoints': [],
-    'endTime': null,
-    'startTime': null
-  };
+  final _task = SubmitTask();
 
   Widget _renderCheckpoints() {
-    final tileList = (_task['checkpoints'] as List)
-        .map((x) => Checkpoint.fromJson(x))
+    // TODO: Convert to Stepper
+    final tileList = _task.checkpoints
         .map((Checkpoint x) => ListTile(
               title: Text(x.title),
               subtitle: Text(x.description),
@@ -95,7 +87,7 @@ class _TaskFormState extends State<TaskForm> {
               },
               onSaved: (String res) {
                 setState(() {
-                  _task['name'] = res;
+                  _task.name = res;
                 });
               },
             ),
@@ -111,12 +103,7 @@ class _TaskFormState extends State<TaskForm> {
               ),
               onChanged: (DateTime time) {
                 setState(() {
-                  _task['startTime'] = time;
-                });
-              },
-              onSaved: (DateTime time) {
-                setState(() {
-                  _task['startTime'] = time.toIso8601String();
+                  _task.startTime = time;
                 });
               },
               validator: (DateTime time) {
@@ -137,20 +124,15 @@ class _TaskFormState extends State<TaskForm> {
                 ),
                 labelText: 'End time',
               ),
-              enabled: (_task['startTime'] != null),
+              enabled: (_task.startTime != null),
               onChanged: (DateTime time) {
                 setState(() {
-                  _task['endTime'] = time;
-                });
-              },
-              onSaved: (DateTime time) {
-                setState(() {
-                  _task['startTime'] = time.toIso8601String();
+                  _task.endTime = time;
                 });
               },
               validator: (DateTime time) {
                 if (time == null) return 'End time is required';
-                DateTime startTime = _task['startTime'];
+                DateTime startTime = _task.startTime;
                 if (startTime != null && startTime.isBefore(time))
                   return null;
                 else
@@ -181,7 +163,7 @@ class _TaskFormState extends State<TaskForm> {
               },
               onSaved: (String res) {
                 setState(() {
-                  _task['description'] = res;
+                  _task.description = res;
                 });
               },
             ),
