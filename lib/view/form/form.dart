@@ -1,3 +1,4 @@
+import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,6 @@ class _TaskFormState extends State<TaskForm> {
   final _formKey = GlobalKey<FormState>();
   final _task = <String, dynamic>{
     'name': null,
-    'id': null,
     'description': '',
     'creator': null,
     'createTime': null,
@@ -32,6 +32,23 @@ class _TaskFormState extends State<TaskForm> {
     'endTime': null,
     'startTime': null
   };
+
+  Widget _renderCheckpoints() {
+    final tileList = (_task['checkpoints'] as List)
+        .map((x) => Checkpoint.fromJson(x))
+        .map((Checkpoint x) => ListTile(
+              title: Text(x.title),
+              subtitle: Text(x.description),
+              onTap: () {
+                // Open Editor
+              },
+            ))
+        .toList();
+    return Column(
+      children: tileList,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: Add all field
@@ -170,10 +187,18 @@ class _TaskFormState extends State<TaskForm> {
             ),
             padding: EdgeInsets.all(16),
           ),
+          _renderCheckpoints(),
+          FlatButton(
+            child: Text('Add checkpoint'),
+            onPressed: () {
+              // Call add checkpoint
+            },
+          ),
           Padding(
             child: RaisedButton(
               child: Text('Submit'),
               onPressed: () {
+                // TODO: Add alert
                 if (_formKey.currentState.validate()) {
                   Scaffold.of(context).showSnackBar(SnackBar(
                     content: Text('Success'),
