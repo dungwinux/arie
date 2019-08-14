@@ -22,6 +22,12 @@ class _TaskListState extends State<TaskList> {
     _data = _fetchData();
   }
 
+  void _reload() {
+    setState(() {
+      _data = _fetchData();
+    });
+  }
+
   // Consider switch from Stream to Future
   Stream<List<Task>> _fetchData() {
     return taskDB.watchAllTasks().map((List<BasicTask> taskList) =>
@@ -35,7 +41,6 @@ class _TaskListState extends State<TaskList> {
       builder: (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasError)
-            // TODO: [High] Add 'tap to retry'
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -48,6 +53,10 @@ class _TaskListState extends State<TaskList> {
                   Text(
                     'Something is not working: ${snapshot.error}',
                     style: TextStyle(color: Colors.black38),
+                  ),
+                  RaisedButton(
+                    child: Text('Retry'),
+                    onPressed: _reload,
                   ),
                 ],
               ),
@@ -66,7 +75,7 @@ class _TaskListState extends State<TaskList> {
                     color: Colors.black38,
                   ),
                   Text(
-                    'No result found',
+                    'No assigned task',
                     style: TextStyle(color: Colors.black38),
                   ),
                 ],
