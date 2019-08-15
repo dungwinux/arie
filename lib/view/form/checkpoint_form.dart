@@ -211,7 +211,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
               padding: EdgeInsets.all(16),
             ),
             FlatButton(
-              child: Text('Set checkpoint'),
+              child: Text('Set label'),
               onPressed: () async {
                 final ImageSource source = await showModalBottomSheet(
                   context: context,
