@@ -1,10 +1,8 @@
 import 'package:arie/controller/img_process.dart';
 import 'package:arie/controller/task_local.dart';
 import 'package:arie/model/checkpoint.dart';
-import 'package:arie/model/database.dart';
 import 'package:arie/model/task.dart';
 import 'package:arie/view/camera/camera.dart';
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:slide_countdown_clock/slide_countdown_clock.dart';
@@ -153,6 +151,7 @@ class TaskView extends StatelessWidget {
           ? FloatingActionButton(
               child: Icon(Icons.camera),
               onPressed: () async {
+                // TODO: [Low] Change Camera page to ImagePicker
                 final imgPath = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => CameraPage()),
