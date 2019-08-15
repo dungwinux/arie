@@ -43,46 +43,50 @@ class OverallPerformance extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: [High] Replace mock test
     List<Color> gradientColors = [
-      Color(0xff23b6e6),
+      Color(0x5f23b6e6),
       Color(0xff02d39a),
     ];
     return AspectRatio(
       aspectRatio: 2,
-      child: Container(
-        padding: EdgeInsets.all(12),
-        width: MediaQuery.of(context).size.width,
-        child: FlChart(
-          chart: LineChart(
-            LineChartData(
-                gridData: FlGridData(show: false),
-                titlesData: FlTitlesData(show: false),
-                borderData: FlBorderData(show: false),
-                minX: 0,
-                maxX: 10,
-                minY: 0,
-                maxY: 10,
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: [
-                      FlSpot(0, 3),
-                      FlSpot(1, 2),
-                      FlSpot(2, 5),
-                      FlSpot(3, 3),
-                      FlSpot(4, 4),
-                      FlSpot(5, 9),
-                      FlSpot(6, 5),
-                      FlSpot(7, 3),
-                      FlSpot(8, 5),
-                      FlSpot(9, 4),
-                      FlSpot(10, 5),
-                    ],
-                    colors: gradientColors,
-                    isCurved: true,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(show: true),
-                    belowBarData: BelowBarData(show: false),
-                  )
-                ]),
+      child: Opacity(
+        opacity: .8,
+        child: Container(
+          padding: EdgeInsets.all(12),
+          width: MediaQuery.of(context).size.width,
+          child: FlChart(
+            chart: LineChart(
+              LineChartData(
+                  gridData: FlGridData(show: false),
+                  titlesData: FlTitlesData(show: false),
+                  borderData: FlBorderData(show: false),
+                  minX: 0,
+                  maxX: 10,
+                  minY: 0,
+                  maxY: 10,
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: [
+                        FlSpot(0, 3),
+                        FlSpot(1, 2),
+                        FlSpot(2, 5),
+                        FlSpot(3, 3),
+                        FlSpot(4, 4),
+                        FlSpot(5, 9),
+                        FlSpot(6, 5),
+                        FlSpot(7, 3),
+                        FlSpot(8, 5),
+                        FlSpot(9, 4),
+                        FlSpot(10, 5),
+                      ],
+                      barWidth: 5,
+                      colors: gradientColors,
+                      isCurved: true,
+                      isStrokeCapRound: true,
+                      dotData: FlDotData(show: true),
+                      belowBarData: BelowBarData(show: false),
+                    )
+                  ]),
+            ),
           ),
         ),
       ),
