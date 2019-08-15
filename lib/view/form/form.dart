@@ -125,7 +125,9 @@ class _TaskFormState extends State<TaskForm> {
               },
               validator: (DateTime time) {
                 if (time == null) return 'Start time is required';
-                return null;
+                else if (time.isBefore(DateTime.now()))
+                  return 'Start time must be after now';
+                else return null;
               },
               format: _dateTimeFormat,
               readOnly: true,
@@ -150,10 +152,12 @@ class _TaskFormState extends State<TaskForm> {
               validator: (DateTime time) {
                 if (time == null) return 'End time is required';
                 DateTime startTime = _task.startTime;
-                if (startTime != null && startTime.isBefore(time))
-                  return null;
-                else
+                if (startTime.isAfter(time))
                   return 'End time must be after startTime';
+                else if (time.isBefore(DateTime.now()))
+                  return 'End time must be after now';
+                else
+                  return null;
               },
               format: _dateTimeFormat,
               readOnly: true,
