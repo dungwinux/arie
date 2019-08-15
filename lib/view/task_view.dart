@@ -160,7 +160,8 @@ class TaskView extends StatelessWidget {
                 if (imgPath == null) return;
                 final current = task.checkpoints[task.doneSubtask];
                 final Future<Widget> _futureResult =
-                    imgProcess(imgPath, current.label).then((data) async {
+                    imgProcess(imgPath, mode: current.type)
+                        .then((data) async {
                   final List<String> res = data;
                   if (res.isEmpty) {
                     return ListTile(
