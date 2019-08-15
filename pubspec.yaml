@@ -38,7 +38,8 @@ dependencies:
   datetime_picker_formfield: ^0.4.2
   intl: ^0.15.8
   flutter_pagewise: ^1.2.3
-  
+  image_picker: ^0.6.1+2
+  progress_dialog: ^1.1.0+1
 
 dev_dependencies:
   flutter_test:

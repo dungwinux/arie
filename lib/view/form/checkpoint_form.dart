@@ -1,6 +1,9 @@
+import 'package:arie/controller/img_process.dart';
 import 'package:arie/model/checkpoint.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:latlong/latlong.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class CheckpointForm extends StatefulWidget {
   final Checkpoint checkpoint;
@@ -13,6 +16,8 @@ class CheckpointForm extends StatefulWidget {
 class _CheckpointFormState extends State<CheckpointForm> {
   Checkpoint checkpoint;
   final _formKey = GlobalKey<FormState>();
+  ProgressDialog pw;
+  TextEditingController _labelController;
 
   @override
   void initState() {
@@ -22,20 +27,30 @@ class _CheckpointFormState extends State<CheckpointForm> {
           location: LatLng(0, 0),
           type: 'barcode',
         );
+    pw = ProgressDialog(context, ProgressDialogType.Normal);
+    _labelController = TextEditingController(text: checkpoint.label);
+  }
+
+  Future<String> imageSetter(ImageSource source) async {
+    try {
+      final image = await ImagePicker.pickImage(source: source);
+      final processImage = await imgProcess(image.path, mode: checkpoint.type);
+      return processImage.first;
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: [Low] Consider changing to dialog
     // TODO: [Low] Constraint Field Position
-    // TODO: [High] Add support for other type of label
-    // TODO: [High] Change label input to picture
     return Scaffold(
       appBar: AppBar(
         title: Text('Checkpoint editor'),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.add),
+            icon: Icon(Icons.save),
             onPressed: () {
               if (_formKey.currentState.validate()) {
                 _formKey.currentState.save();
@@ -150,14 +165,37 @@ class _CheckpointFormState extends State<CheckpointForm> {
               ),
             ),
             Container(
+              child: DropdownButtonFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2),
+                  ),
+                  labelText: 'Label type',
+                ),
+                value: checkpoint.type,
+                items: supportType
+                    .map((String type) => DropdownMenuItem<String>(
+                          child: Text(type),
+                          value: type,
+                        ))
+                    .toList(),
+                onChanged: (String res) {
+                  setState(() {
+                    checkpoint.type = res;
+                  });
+                },
+              ),
+              padding: EdgeInsets.all(16),
+            ),
+            Container(
               child: TextFormField(
+                controller: _labelController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderSide: BorderSide(width: 2),
                   ),
                   labelText: 'Label',
                 ),
-                initialValue: checkpoint.label,
                 keyboardType: TextInputType.text,
                 validator: (value) {
                   if (value.isEmpty) return 'Label required';
@@ -171,6 +209,43 @@ class _CheckpointFormState extends State<CheckpointForm> {
                 },
               ),
               padding: EdgeInsets.all(16),
+            ),
+            FlatButton(
+              child: Text('Set checkpoint'),
+              onPressed: () async {
+                final ImageSource source = await showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: false,
+                  builder: (context) => Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ListTile(
+                        leading: Icon(Icons.image),
+                        title: Text('From gallery'),
+                        onTap: () async {
+                          Navigator.of(context).pop(ImageSource.gallery);
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.camera_alt),
+                        title: Text('Take a picture'),
+                        onTap: () async {
+                          Navigator.of(context).pop(ImageSource.camera);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+                if (source == null) return;
+                pw.show();
+                final result = await imageSetter(source);
+                if (result != null) {
+                  setState(() {
+                    _labelController.text = result;
+                  });
+                }
+                pw.hide();
+              },
             ),
           ],
         ),
