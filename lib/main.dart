@@ -29,7 +29,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    // TODO: [Low] Change to SliverAppBar
     return Scaffold(
       body: Overview(),      
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

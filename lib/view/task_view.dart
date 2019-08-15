@@ -84,7 +84,6 @@ class TaskView extends StatelessWidget {
     return null;
   }
 
-  // TODO: [High] Add progress graph
   // TODO: [Low] Change how task_view opened in Search
 
   @override

@@ -113,10 +113,10 @@ class _TaskListState extends State<TaskList> {
 
           return Column(
             children: [
-              OverallProgress(
-                _formatList.length,
-                _formatList.where((x) => x.percent == 1).length,
-              ),
+              // OverallProgress(
+              //   _formatList.length,
+              //   _formatList.where((x) => x.percent == 1).length,
+              // ),
               Card(child: Column(children: renderList)),
             ],
           );

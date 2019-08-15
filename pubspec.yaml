@@ -40,6 +40,7 @@ dependencies:
   flutter_pagewise: ^1.2.3
   image_picker: ^0.6.1+2
   progress_dialog: ^1.1.0+1
+  fl_chart: ^0.1.5
 
 dev_dependencies:
   flutter_test:
