@@ -160,8 +160,7 @@ class TaskView extends StatelessWidget {
                 if (imgPath == null) return;
                 final Future<Widget> _futureResult =
                     mlBarcodeScan(imgPath).then((data) async {
-                  final List<String> res =
-                      data.map((Barcode x) => x.rawValue).toList();
+                  final List<String> res = data;
                   if (res.isEmpty) {
                     return ListTile(
                       title: Text('Nothing is found'),
