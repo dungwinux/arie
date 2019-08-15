@@ -158,16 +158,16 @@ class TaskView extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => CameraPage()),
                 );
                 if (imgPath == null) return;
+                final current = task.checkpoints[task.doneSubtask];
                 final Future<Widget> _futureResult =
-                    mlBarcodeScan(imgPath).then((data) async {
+                    imgProcess(imgPath, current.label).then((data) async {
                   final List<String> res = data;
                   if (res.isEmpty) {
                     return ListTile(
                       title: Text('Nothing is found'),
                     );
                   }
-                  if (res.any(
-                      (x) => x == task.checkpoints[task.doneSubtask].label)) {
+                  if (res.any((x) => x == current.label)) {
                     task.doneSubtask += 1;
                     await taskDB.updateTask(task.toBasicTask());
                     return ListTile(
@@ -191,7 +191,6 @@ class TaskView extends StatelessWidget {
                     isScrollControlled: false,
                     context: context,
                     builder: (context) => FutureBuilder(
-                          // TODO: [High] Process different type of checkpoint
                           future: _futureResult,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
