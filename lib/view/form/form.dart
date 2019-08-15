@@ -204,9 +204,30 @@ class _TaskFormState extends State<TaskForm> {
             child: RaisedButton(
               child: Text('Submit'),
               onPressed: () async {
-                // TODO: [High] Add alert and loading dialog
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
+                  bool confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Are you sure ?'),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text('Cancel'),
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                        ),
+                        FlatButton(
+                          child: Text('Send'),
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                  if (!confirm)
+                    return;
                   try {
                     final sendSuccess = await TaskFetch.send(_task);
                     if (sendSuccess) {
@@ -215,7 +236,7 @@ class _TaskFormState extends State<TaskForm> {
                       ));
                     } else {
                       Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('Server was unable to receive task'),
+                        content: Text('Unable to send task. Wait a moment before trying again'),
                       ));
                     }
                   } catch (e) {
