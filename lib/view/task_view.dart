@@ -159,8 +159,7 @@ class TaskView extends StatelessWidget {
                 if (imgPath == null) return;
                 final current = task.checkpoints[task.doneSubtask];
                 final Future<Widget> _futureResult =
-                    imgProcess(imgPath, mode: current.type)
-                        .then((data) async {
+                    imgProcess(imgPath, mode: current.type).then((data) async {
                   final List<String> res = data;
                   if (res.isEmpty) {
                     return ListTile(
@@ -222,14 +221,20 @@ class MapView extends StatefulWidget {
 
 class _MapViewState extends State<MapView> {
   final _controller = MapController();
-  final _pageController = PageController(viewportFraction: 0.8);
+  PageController _pageController;
+  int idx;
+
+  @override
+  void initState() {
+    super.initState();
+    idx = widget.checkpoints.length == widget.index
+        ? widget.checkpoints.length - 1
+        : widget.index;
+    _pageController = PageController(viewportFraction: 0.8, initialPage: idx);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: [Medium] Set default page
-    final idx = widget.checkpoints.length == widget.index
-        ? widget.checkpoints.length - 1
-        : widget.index;
     // TODO: [High] Update map when checkpoint is completed
     // TODO: [Medium] Stack the map with completed widget
     // TODO: [High] Use full-screen dialog upon completing
