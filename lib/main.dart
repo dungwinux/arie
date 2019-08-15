@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
             IconButton(
               icon: Icon(Icons.menu),
               onPressed: () {
-                // Open drawer, or show up BottomSheet
+                // TODO: [Medium] Remove this, or show up BottomSheet
               },
             ),
             Container(

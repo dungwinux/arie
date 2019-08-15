@@ -233,7 +233,8 @@ class _MapViewState extends State<MapView> {
         ? widget.checkpoints.length - 1
         : widget.index;
     // TODO: [High] Update map when checkpoint is completed
-    // TODO: [Low] Add last section so that PageView does not overflow
+    // TODO: [Medium] Stack the map with completed widget
+    // TODO: [High] Use full-screen dialog upon completing
 
     final centerLoc = widget.checkpoints[idx].location;
 
