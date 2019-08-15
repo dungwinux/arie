@@ -29,9 +29,15 @@ class AppDatabase extends _$AppDatabase {
   Future insertTask(BasicTask task) => into(basicTasks).insert(task);
   Future updateTask(BasicTask task) => update(basicTasks).replace(task);
   Future deleteTask(BasicTask task) => delete(basicTasks).delete(task);
-  Future isTaskExist(BasicTask task) async {
+
+  Future getTask(String id) async {
     final output = await select(basicTasks).get();
-    return output.any((BasicTask t) => t.id == task.id);
+    return output.firstWhere((x) => x.id == id);
+  }
+
+  Future isTaskExist(String id) async {
+    final output = await select(basicTasks).get();
+    return output.any((BasicTask t) => t.id == id);
   }
 
   @override

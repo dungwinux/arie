@@ -99,7 +99,7 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
             trailing: IconButton(
               icon: Icon(Icons.send),
               onPressed: () async {
-                if (await taskDB.isTaskExist(BasicTask(id: _task.id)))
+                if (await taskDB.isTaskExist(_task.id))
                   Scaffold.of(context).showSnackBar(SnackBar(
                       content: Text('${_task.name} was already added')));
                 else
