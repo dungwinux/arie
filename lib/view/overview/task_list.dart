@@ -1,4 +1,3 @@
-import 'package:arie/controller/task_fetch.dart';
 import 'package:arie/controller/task_local.dart';
 import 'package:arie/model/database.dart';
 import 'package:arie/model/task.dart';

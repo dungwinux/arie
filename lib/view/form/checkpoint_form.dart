@@ -43,7 +43,6 @@ class _CheckpointFormState extends State<CheckpointForm> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: [Low] Consider changing to dialog
     // TODO: [Low] Constraint Field Position
     return Scaffold(
       appBar: AppBar(

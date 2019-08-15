@@ -4,7 +4,7 @@ final List<String> supportType = ['barcode', 'object'];
 
 Future<List<String>> imgProcess(String imagePath, {String mode}) {
   final image = FirebaseVisionImage.fromFilePath(imagePath);
-  // TODO: [Medium] Add more type
+  // TODO: [Low] Add more type
   switch (mode) {
     case 'barcode':
       return mlBarcodeScan(image);

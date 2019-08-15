@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       title: 'Arie',
       theme: ThemeData(
         // TODO: [Medium] Change theme
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.amber,
       ),
       home: MyHomePage(),
     );
