@@ -141,66 +141,84 @@ class TaskView extends StatelessWidget {
         children: <Widget>[
           _renderClock(),
           MapView(task.checkpoints, task.doneSubtask),
-          // _infoCard('Checkpoint map', _checkpointsList(task.checkpoints)),
           _infoCard('Description', _bodyText(task.description)),
         ],
       ),
-      floatingActionButton: (isAssigned &&
-              task.doneSubtask < task.checkpoints.length
-          ? FloatingActionButton(
-              child: Icon(Icons.camera),
-              onPressed: () async {
-                // TODO: [Low] Change Camera page to ImagePicker
-                final imgPath = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CameraPage()),
-                );
-                if (imgPath == null) return;
-                final current = task.checkpoints[task.doneSubtask];
-                final Future<Widget> _futureResult =
-                    imgProcess(imgPath, mode: current.type).then((data) async {
-                  final List<String> res = data;
-                  if (res.isEmpty) {
-                    return ListTile(
-                      title: Text('Nothing is found'),
+      floatingActionButton:
+          (isAssigned && task.doneSubtask < task.checkpoints.length
+              ? Builder(
+                  builder: (context) {
+                    return FloatingActionButton(
+                      child: Icon(Icons.camera),
+                      onPressed: () async {
+                        // TODO: [Low] Change Camera page to ImagePicker
+                        final now = DateTime.now();
+                        if (now.isBefore(task.startTime)) {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text('Please wait before the task start.'),
+                          ));
+                          return;
+                        } else if (now.isAfter(task.endTime)) {
+                          
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text('Task has already ended.'),
+                          ));
+                          return;
+                        }
+
+                        final imgPath = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CameraPage()),
+                        );
+                        if (imgPath == null) return;
+                        final current = task.checkpoints[task.doneSubtask];
+                        final Future<Widget> _futureResult =
+                            imgProcess(imgPath, mode: current.type)
+                                .then((data) async {
+                          final List<String> res = data;
+                          if (res.isEmpty) {
+                            return ListTile(
+                              title: Text('Nothing is found'),
+                            );
+                          }
+                          if (res.any((x) => x == current.label)) {
+                            task.doneSubtask += 1;
+                            await taskDB.updateTask(task.toBasicTask());
+                            return ListTile(
+                              title: Text('Correct answer'),
+                            );
+                          } else {
+                            return ListTile(
+                              title: Text('Wrong answer'),
+                              subtitle: Text('$res'),
+                            );
+                          }
+                        }).catchError(
+                          (e) => ListTile(
+                            title: Text('Something is not right'),
+                          ),
+                        );
+                        showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(16))),
+                            isScrollControlled: false,
+                            context: context,
+                            builder: (context) => FutureBuilder(
+                                  future: _futureResult,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return snapshot.data;
+                                    } else
+                                      return LinearProgressIndicator();
+                                  },
+                                ));
+                      },
                     );
-                  }
-                  if (res.any((x) => x == current.label)) {
-                    task.doneSubtask += 1;
-                    await taskDB.updateTask(task.toBasicTask());
-                    return ListTile(
-                      title: Text('Correct answer'),
-                    );
-                  } else {
-                    return ListTile(
-                      title: Text('Wrong answer'),
-                      subtitle: Text('$res'),
-                    );
-                  }
-                }).catchError(
-                  (e) => ListTile(
-                    title: Text('Something is not right'),
-                  ),
-                );
-                showModalBottomSheet(
-                    shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(16))),
-                    isScrollControlled: false,
-                    context: context,
-                    builder: (context) => FutureBuilder(
-                          future: _futureResult,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              return snapshot.data;
-                            } else
-                              return LinearProgressIndicator();
-                          },
-                        ));
-              },
-            )
-          : null),
+                  },
+                )
+              : null),
     );
   }
 }
