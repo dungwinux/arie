@@ -3,9 +3,9 @@ import 'package:arie/controller/img_process.dart';
 import 'package:arie/controller/task_local.dart';
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
-import 'package:arie/view/camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:slide_countdown_clock/slide_countdown_clock.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -145,87 +145,87 @@ class TaskView extends StatelessWidget {
           _infoCard('Description', _bodyText(task.description)),
         ],
       ),
-      floatingActionButton:
-          (isAssigned
-              ? Builder(
-                  builder: (context) {
-                    return FloatingActionButton(
-                      child: Icon(Icons.camera),
-                      onPressed: () async {
-                        // TODO: [Low] Change Camera page to ImagePicker
-                        final now = DateTime.now();
-                        if (now.isBefore(task.startTime)) {
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text('Please wait before the task start.'),
-                          ));
-                          return;
-                        } else if (now.isAfter(task.endTime)) {
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text('Task has already ended.'),
-                          ));
-                          return;
-                        }
-                        final current = task.checkpoints[task.doneSubtask];
-                        final location = await getLocation();
-                        final distance = getDistance(location, current.location);
-                        if (distance > 10) {
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text('You are too far away from site.'),
-                          ));
-                          return;
-                        } 
-                        final imgPath = await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => CameraPage()),
-                        );
-                        if (imgPath == null) return;
-                        final Future<Widget> _futureResult =
-                            imgProcess(imgPath, mode: current.type)
-                                .then((data) async {
-                          final List<String> res = data;
-                          if (res.isEmpty) {
-                            return ListTile(
-                              title: Text('Nothing is found'),
-                            );
-                          }
-                          if (res.any((x) => x == current.label)) {
-                            task.doneSubtask += 1;
-                            await taskDB.updateTask(task.toBasicTask());
-                            return ListTile(
-                              title: Text('Correct answer'),
-                            );
-                          } else {
-                            return ListTile(
-                              title: Text('Wrong answer'),
-                              subtitle: Text('$res'),
-                            );
-                          }
-                        }).catchError(
-                          (e) => ListTile(
-                            title: Text('Something is not right'),
-                          ),
-                        );
-                        showModalBottomSheet(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(16))),
-                            isScrollControlled: false,
-                            context: context,
-                            builder: (context) => FutureBuilder(
-                                  future: _futureResult,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.done) {
-                                      return snapshot.data;
-                                    } else
-                                      return LinearProgressIndicator();
-                                  },
-                                ));
-                      },
+      floatingActionButton: (isAssigned
+          ? Builder(
+              builder: (context) {
+                return FloatingActionButton(
+                  child: Icon(Icons.camera),
+                  onPressed: () async {
+                    final now = DateTime.now();
+                    if (now.isBefore(task.startTime)) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('Please wait before the task start.'),
+                      ));
+                      return;
+                    } else if (now.isAfter(task.endTime)) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('Task has already ended.'),
+                      ));
+                      return;
+                    }
+                    final current = task.checkpoints[task.doneSubtask];
+                    final location = await getLocation();
+                    final distance = getDistance(location, current.location);
+                    if (distance > 10) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('You are too far away from site.'),
+                      ));
+                      return;
+                    }
+                    // TODO: [Low] Handle edge case of ImagePicker.
+                    // See https://pub.dev/packages/image_picker#handling-mainactivity-destruction-on-android
+                    final img = await ImagePicker.pickImage(
+                      imageQuality: 80,
+                      source: ImageSource.camera,
                     );
+                    if (img == null) return;
+                    final Future<Widget> _futureResult =
+                        imgProcess(img.path, mode: current.type)
+                            .then((data) async {
+                      final List<String> res = data;
+                      if (res.isEmpty) {
+                        return ListTile(
+                          title: Text('Nothing is found'),
+                        );
+                      }
+                      if (res.any((x) => x == current.label)) {
+                        task.doneSubtask += 1;
+                        await taskDB.updateTask(task.toBasicTask());
+                        return ListTile(
+                          title: Text('Correct answer'),
+                        );
+                      } else {
+                        return ListTile(
+                          title: Text('Wrong answer'),
+                          subtitle: Text('$res'),
+                        );
+                      }
+                    }).catchError(
+                      (e) => ListTile(
+                        title: Text('Something is not right'),
+                      ),
+                    );
+                    showModalBottomSheet(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(16))),
+                        isScrollControlled: false,
+                        context: context,
+                        builder: (context) => FutureBuilder(
+                              future: _futureResult,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  return snapshot.data;
+                                } else
+                                  return LinearProgressIndicator();
+                              },
+                            ));
                   },
-                )
-              : null),
+                );
+              },
+            )
+          : null),
     );
   }
 }
