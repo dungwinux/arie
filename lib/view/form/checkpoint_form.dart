@@ -1,5 +1,6 @@
 import 'package:arie/controller/img_process.dart';
 import 'package:arie/model/checkpoint.dart';
+import 'package:arie/view/form/map_form.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong/latlong.dart';
@@ -18,6 +19,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
   final _formKey = GlobalKey<FormState>();
   ProgressDialog pw;
   TextEditingController _labelController;
+  TextEditingController _latController, _lngController;
 
   @override
   void initState() {
@@ -29,6 +31,10 @@ class _CheckpointFormState extends State<CheckpointForm> {
         );
     pw = ProgressDialog(context, ProgressDialogType.Normal);
     _labelController = TextEditingController(text: checkpoint.label);
+    _latController =
+        TextEditingController(text: checkpoint.location.latitude.toString());
+    _lngController =
+        TextEditingController(text: checkpoint.location.longitude.toString());
   }
 
   Future<String> imageSetter(ImageSource source) async {
@@ -120,7 +126,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
                   ),
                   labelText: 'Latitude',
                 ),
-                initialValue: checkpoint.location.latitude.toString(),
+                controller: _latController,
                 keyboardType: TextInputType.numberWithOptions(
                     decimal: true, signed: true),
                 validator: (value) {
@@ -146,7 +152,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
                   ),
                   labelText: 'Longitude',
                 ),
-                initialValue: checkpoint.location.longitude.toString(),
+                controller: _lngController,
                 keyboardType: TextInputType.numberWithOptions(
                     decimal: true, signed: true),
                 validator: (value) {
@@ -162,6 +168,27 @@ class _CheckpointFormState extends State<CheckpointForm> {
                   });
                 },
               ),
+            ),
+            FlatButton(
+              child: Text('Set label'),
+              onPressed: () async {
+                final currentLoc = LatLng(
+                  double.tryParse(_latController.text),
+                  double.tryParse(_lngController.text),
+                );
+                final LatLng loc = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => LocationForm(
+                            location: currentLoc,
+                          )),
+                );
+                if (loc != null)
+                  setState(() {
+                    _latController.text = loc.latitude.toString();
+                    _lngController.text = loc.longitude.toString();
+                  });
+              },
             ),
             Container(
               child: DropdownButtonFormField(
@@ -209,41 +236,49 @@ class _CheckpointFormState extends State<CheckpointForm> {
               ),
               padding: EdgeInsets.all(16),
             ),
-            FlatButton(
-              child: Text('Set label'),
-              onPressed: () async {
-                final ImageSource source = await showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: false,
-                  builder: (context) => Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      ListTile(
-                        leading: Icon(Icons.image),
-                        title: Text('From gallery'),
-                        onTap: () async {
-                          Navigator.of(context).pop(ImageSource.gallery);
-                        },
+            Builder(
+              builder: (context) {
+                return FlatButton(
+                  child: Text('Set label'),
+                  onPressed: () async {
+                    final ImageSource source = await showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: false,
+                      builder: (context) => Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                            leading: Icon(Icons.image),
+                            title: Text('From gallery'),
+                            onTap: () async {
+                              Navigator.of(context).pop(ImageSource.gallery);
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.camera_alt),
+                            title: Text('Take a picture'),
+                            onTap: () async {
+                              Navigator.of(context).pop(ImageSource.camera);
+                            },
+                          ),
+                        ],
                       ),
-                      ListTile(
-                        leading: Icon(Icons.camera_alt),
-                        title: Text('Take a picture'),
-                        onTap: () async {
-                          Navigator.of(context).pop(ImageSource.camera);
-                        },
-                      ),
-                    ],
-                  ),
+                    );
+                    if (source == null) return;
+                    pw.show();
+                    final result = await imageSetter(source);
+                    if (result != null) {
+                      setState(() {
+                        _labelController.text = result;
+                      });
+                    } else {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('Cannot get label from image'),
+                      ));
+                    }
+                    pw.hide();
+                  },
                 );
-                if (source == null) return;
-                pw.show();
-                final result = await imageSetter(source);
-                if (result != null) {
-                  setState(() {
-                    _labelController.text = result;
-                  });
-                }
-                pw.hide();
               },
             ),
           ],
