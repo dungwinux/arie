@@ -247,8 +247,9 @@ class TaskView extends StatelessWidget {
 class MapView extends StatefulWidget {
   final List<Checkpoint> checkpoints;
   final int index;
+  final MapController controller;
 
-  MapView(this.checkpoints, this.index)
+  MapView(this.checkpoints, this.index, {this.controller})
       : assert(checkpoints.length > 0 &&
             index >= 0 &&
             index <= checkpoints.length);
@@ -258,7 +259,7 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
-  final _controller = MapController();
+  MapController _mapController;
   PageController _pageController;
   int idx;
 
@@ -269,6 +270,7 @@ class _MapViewState extends State<MapView> {
         ? widget.checkpoints.length - 1
         : widget.index;
     _pageController = PageController(viewportFraction: 0.8, initialPage: idx);
+    _mapController == widget.controller ?? MapController();
   }
 
   @override
@@ -308,7 +310,7 @@ class _MapViewState extends State<MapView> {
           height: 300,
           child: FlutterMap(
             options: MapOptions(center: centerLoc, zoom: 12),
-            mapController: _controller,
+            mapController: _mapController,
             layers: [
               // TODO: [Low] Change map provider
               TileLayerOptions(
@@ -328,8 +330,8 @@ class _MapViewState extends State<MapView> {
             itemCount: widget.checkpoints.length,
             physics: BouncingScrollPhysics(),
             onPageChanged: (int index) {
-              _controller.move(
-                  widget.checkpoints[index].location, _controller.zoom);
+              _mapController.move(
+                  widget.checkpoints[index].location, _mapController.zoom);
             },
             itemBuilder: (context, index) {
               final item = widget.checkpoints[index];
@@ -359,7 +361,7 @@ class _MapViewState extends State<MapView> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     onTap: () {
-                      _controller.move(item.location, _controller.zoom);
+                      _mapController.move(item.location, _mapController.zoom);
                     },
                     onLongPress: () {
                       showModalBottomSheet(
