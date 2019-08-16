@@ -6,6 +6,7 @@ import 'package:arie/model/task.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:slide_countdown_clock/slide_countdown_clock.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -13,6 +14,7 @@ class TaskView extends StatelessWidget {
   // Convert task into Future
   final Task task;
   final bool isAssigned;
+  final GlobalKey<_MapViewState> _mapKey = GlobalKey();
 
   TaskView(this.task, {this.isAssigned = false});
 
@@ -141,7 +143,11 @@ class TaskView extends StatelessWidget {
       body: ListView(
         children: <Widget>[
           _renderClock(),
-          MapView(task.checkpoints, task.doneSubtask),
+          MapView(
+            task.checkpoints,
+            task.doneSubtask,
+            key: _mapKey,
+          ),
           _infoCard('Description', _bodyText(task.description)),
         ],
       ),
@@ -152,113 +158,111 @@ class TaskView extends StatelessWidget {
                   child: Icon(Icons.camera),
                   onPressed: () async {
                     final current = task.checkpoints[task.doneSubtask];
-
-                    if (task.doneSubtask == task.checkpoints.length) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('All task were completed.'),
-                      ));
-                      return;
-                    }
-
-                    // TODO: [Medium] Process all Future at once
-                    final now = DateTime.now();
-                    if (now.isBefore(task.startTime)) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('Please wait before the task start.'),
-                      ));
-                      return;
-                    } else if (now.isAfter(task.endTime)) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('Task has already ended.'),
-                      ));
-                      return;
-                    }
-
-                    // Temporarily disabled for performance
-                    // TODO: [Low] Reactive location
-                    // final location = await getLocation();
-                    // final distance = getDistance(location, current.location);
-                    // if (distance > 10) {
-                    //   Scaffold.of(context).showSnackBar(SnackBar(
-                    //     content: Text('You are too far away from site.'),
-                    //   ));
-                    //   return;
-                    // }
-
-                    // TODO: [Low] Handle edge case of ImagePicker.
-                    // See https://pub.dev/packages/image_picker#handling-mainactivity-destruction-on-android
-                    final img = await ImagePicker.pickImage(
-                      imageQuality: 80,
-                      source: ImageSource.camera,
-                    );
-                    if (img == null) return;
-                    final Future<Widget> _futureResult =
-                        imgProcess(img.path, mode: current.type)
-                            .then((data) async {
-                      final List<String> res = data;
-                      if (res.isEmpty) {
-                        return ListTile(
-                          leading: Icon(Icons.warning, color: Colors.yellow),
-                          title: Text('Nothing is found'),
-                        );
+                    final pw =
+                        ProgressDialog(context, ProgressDialogType.Normal);
+                    try {
+                      if (task.doneSubtask == task.checkpoints.length) {
+                        throw 'All task were completed.';
                       }
-                      if (res.any((x) => x == current.label)) {
-                        task.doneSubtask += 1;
-                        await taskDB.updateTask(task.toBasicTask());
-                        return ListTile(
-                          leading: Icon(Icons.check, color: Colors.green),
-                          title: Text('Correct answer'),
-                        );
-                      } else {
-                        return ListTile(
-                          leading: Icon(Icons.close, color: Colors.red),
-                          title: Text('Wrong answer'),
-                          subtitle: Text('$res'),
-                        );
-                      }
-                    }).catchError(
-                      (e) => ListTile(
-                        leading: Icon(Icons.sentiment_dissatisfied,
-                            color: Colors.grey),
-                        title: Text('Something is not right'),
-                      ),
-                    );
 
-                    // TODO: [High] Show alert instead of ModalBottomSheet
-                    await showModalBottomSheet(
-                      shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(16))),
-                      isScrollControlled: false,
-                      context: context,
-                      builder: (context) => FutureBuilder(
-                        future: _futureResult,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            return snapshot.data;
-                          } else
-                            return LinearProgressIndicator();
-                        },
-                      ),
-                    );
-                    if (task.doneSubtask == task.checkpoints.length)
-                      await showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Congratulations'),
-                          content: Text('All tasks were completed. Well done.'),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('Okay'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ],
+                      pw.show();
+                      final now = DateTime.now();
+                      if (now.isBefore(task.startTime)) {
+                        throw 'Please wait before the task start.';
+                      } else if (now.isAfter(task.endTime)) {
+                        throw 'Task has already ended.';
+                      }
+
+                      final location = await getLocation();
+                      final distance = getDistance(location, current.location);
+                      if (distance > 10) {
+                        throw 'You are too far away from site.';
+                      }
+
+                      pw.hide();
+                      // TODO: [Low] Handle edge case of ImagePicker.
+                      // See https://pub.dev/packages/image_picker#handling-mainactivity-destruction-on-android
+                      final img = await ImagePicker.pickImage(
+                        imageQuality: 80,
+                        source: ImageSource.camera,
+                      );
+                      if (img == null) return;
+                      final Future<Widget> _futureResult =
+                          imgProcess(img.path, mode: current.type)
+                              .then((data) async {
+                        final List<String> res = data;
+                        if (res.isEmpty) {
+                          return ListTile(
+                            leading: Icon(Icons.warning, color: Colors.yellow),
+                            title: Text('Nothing is found'),
+                          );
+                        }
+                        if (res.any((x) => x == current.label)) {
+                          task.doneSubtask += 1;
+                          await taskDB.updateTask(task.toBasicTask());
+                          _mapKey.currentState.increase();
+
+                          return ListTile(
+                            leading: Icon(Icons.check, color: Colors.green),
+                            title: Text('Correct answer'),
+                          );
+                        } else {
+                          return ListTile(
+                            leading: Icon(Icons.close, color: Colors.red),
+                            title: Text('Wrong answer'),
+                            subtitle: Text('$res'),
+                          );
+                        }
+                      }).catchError(
+                        (e) => ListTile(
+                          leading: Icon(Icons.sentiment_dissatisfied,
+                              color: Colors.grey),
+                          title: Text('Something is not right'),
                         ),
                       );
-                    // TODO: [High] Show alert when task is finish
+                      // TODO: [High] Show alert instead of ModalBottomSheet
+                      await showModalBottomSheet(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
+                        ),
+                        isScrollControlled: false,
+                        context: context,
+                        builder: (context) => FutureBuilder(
+                          future: _futureResult,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return snapshot.data;
+                            } else
+                              return LinearProgressIndicator();
+                          },
+                        ),
+                      );
+                      if (task.doneSubtask == task.checkpoints.length)
+                        await showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Congratulations'),
+                            content:
+                                Text('All tasks were completed. Well done.'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Okay'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          ),
+                        );
+                    } catch (e) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text(e is String ? e : 'Unknown error'),
+                      ));
+                      pw.hide();
+                    }
                   },
                 );
               },
@@ -270,40 +274,50 @@ class TaskView extends StatelessWidget {
 
 class MapView extends StatefulWidget {
   final List<Checkpoint> checkpoints;
-  final int index;
-  final MapController controller;
+  final int doneSubtask;
+  final MapController _mapController;
+  final PageController _pageController;
 
-  MapView(this.checkpoints, this.index, {this.controller})
-      : assert(checkpoints.length > 0 &&
-            index >= 0 &&
-            index <= checkpoints.length);
+  MapView(this.checkpoints, this.doneSubtask,
+      {MapController mapController, PageController pageController, Key key})
+      : assert(checkpoints.length > 0),
+        _mapController = mapController ?? MapController(),
+        _pageController =
+            pageController ?? PageController(viewportFraction: 0.8),
+        super(key: key);
 
   @override
   State<StatefulWidget> createState() => _MapViewState();
 }
 
 class _MapViewState extends State<MapView> {
-  MapController _mapController;
-  PageController _pageController;
-  int idx;
+  // In place of doneSubtask
+  int done;
 
   @override
   void initState() {
     super.initState();
-    idx = widget.checkpoints.length == widget.index
-        ? widget.checkpoints.length - 1
-        : widget.index;
-    _pageController = PageController(viewportFraction: 0.8, initialPage: idx);
-    _mapController == widget.controller ?? MapController();
+    done = widget.doneSubtask;
+  }
+
+  void increase() {
+    if (done < widget.checkpoints.length) {
+      final newIdx = done + 1;
+      if (newIdx < widget.checkpoints.length)
+        widget._pageController.jumpToPage(newIdx);
+      setState(() {
+        done = newIdx;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: [High] Update map when checkpoint is completed
-    // TODO: [Medium] Stack the map with completed widget
     // TODO: [High] Use full-screen dialog upon completing
 
-    final centerLoc = widget.checkpoints[idx].location;
+    final centerLoc = widget
+        .checkpoints[done < widget.checkpoints.length ? done : done - 1]
+        .location;
 
     List<Marker> markerList = <Marker>[];
     for (int i = 0; i < widget.checkpoints.length; i++) {
@@ -319,7 +333,7 @@ class _MapViewState extends State<MapView> {
               color: Colors.red,
               iconSize: 45,
               onPressed: () {
-                _pageController.jumpToPage(i);
+                widget._pageController.jumpToPage(i);
               },
             ),
           ),
@@ -334,7 +348,7 @@ class _MapViewState extends State<MapView> {
           height: 300,
           child: FlutterMap(
             options: MapOptions(center: centerLoc, zoom: 12),
-            mapController: _mapController,
+            mapController: widget._mapController,
             layers: [
               // TODO: [Low] Change map provider
               TileLayerOptions(
@@ -350,12 +364,14 @@ class _MapViewState extends State<MapView> {
           height: 100,
           padding: EdgeInsets.symmetric(vertical: 4),
           child: PageView.builder(
-            controller: _pageController,
+            controller: widget._pageController,
             itemCount: widget.checkpoints.length,
             physics: BouncingScrollPhysics(),
             onPageChanged: (int index) {
-              _mapController.move(
-                  widget.checkpoints[index].location, _mapController.zoom);
+              widget._mapController.move(
+                widget.checkpoints[index].location,
+                widget._mapController.zoom,
+              );
             },
             itemBuilder: (context, index) {
               final item = widget.checkpoints[index];
@@ -385,7 +401,8 @@ class _MapViewState extends State<MapView> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     onTap: () {
-                      _mapController.move(item.location, _mapController.zoom);
+                      widget._mapController
+                          .move(item.location, widget._mapController.zoom);
                     },
                     onLongPress: () {
                       showModalBottomSheet(
@@ -396,7 +413,7 @@ class _MapViewState extends State<MapView> {
                         ),
                       );
                     },
-                    trailing: (widget.index > index
+                    trailing: (done > index
                         ? Icon(Icons.check, color: Colors.green)
                         : null),
                   ),
