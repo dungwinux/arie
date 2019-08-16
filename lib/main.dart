@@ -30,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Overview(),      
+      body: Overview(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.search),
@@ -87,7 +87,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ListTile(
             title: Text('About'),
             onTap: () {
-              showAboutDialog(context: context);
+              showAboutDialog(
+                context: context,
+                applicationName: 'Arie',
+                applicationVersion: 'Alpha',
+              );
             },
           ),
         ],

@@ -4,7 +4,7 @@ import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong/latlong.dart';
 
 class LocationForm extends StatefulWidget {
-  LatLng location;
+  final LatLng location;
   LocationForm({this.location});
   @override
   _LocationFormState createState() => _LocationFormState();

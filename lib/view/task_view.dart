@@ -151,6 +151,9 @@ class TaskView extends StatelessWidget {
                 return FloatingActionButton(
                   child: Icon(Icons.camera),
                   onPressed: () async {
+                    final current = task.checkpoints[task.doneSubtask];
+
+                    // TODO: [Medium] Process all Future at once
                     final now = DateTime.now();
                     if (now.isBefore(task.startTime)) {
                       Scaffold.of(context).showSnackBar(SnackBar(
@@ -163,15 +166,18 @@ class TaskView extends StatelessWidget {
                       ));
                       return;
                     }
-                    final current = task.checkpoints[task.doneSubtask];
-                    final location = await getLocation();
-                    final distance = getDistance(location, current.location);
-                    if (distance > 10) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('You are too far away from site.'),
-                      ));
-                      return;
-                    }
+
+                    // Temporarily disabled for performance
+                    // TODO: [Low] Reactive location
+                    // final location = await getLocation();
+                    // final distance = getDistance(location, current.location);
+                    // if (distance > 10) {
+                    //   Scaffold.of(context).showSnackBar(SnackBar(
+                    //     content: Text('You are too far away from site.'),
+                    //   ));
+                    //   return;
+                    // }
+
                     // TODO: [Low] Handle edge case of ImagePicker.
                     // See https://pub.dev/packages/image_picker#handling-mainactivity-destruction-on-android
                     final img = await ImagePicker.pickImage(
@@ -185,6 +191,7 @@ class TaskView extends StatelessWidget {
                       final List<String> res = data;
                       if (res.isEmpty) {
                         return ListTile(
+                          leading: Icon(Icons.warning, color: Colors.yellow),
                           title: Text('Nothing is found'),
                         );
                       }
@@ -192,35 +199,42 @@ class TaskView extends StatelessWidget {
                         task.doneSubtask += 1;
                         await taskDB.updateTask(task.toBasicTask());
                         return ListTile(
+                          leading: Icon(Icons.check, color: Colors.green),
                           title: Text('Correct answer'),
                         );
                       } else {
                         return ListTile(
+                          leading: Icon(Icons.close, color: Colors.red),
                           title: Text('Wrong answer'),
                           subtitle: Text('$res'),
                         );
                       }
                     }).catchError(
                       (e) => ListTile(
+                        leading: Icon(Icons.sentiment_dissatisfied,
+                            color: Colors.grey),
                         title: Text('Something is not right'),
                       ),
                     );
+
+                    // TODO: [High] Show alert instead of ModalBottomSheet
                     showModalBottomSheet(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(16))),
-                        isScrollControlled: false,
-                        context: context,
-                        builder: (context) => FutureBuilder(
-                              future: _futureResult,
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.done) {
-                                  return snapshot.data;
-                                } else
-                                  return LinearProgressIndicator();
-                              },
-                            ));
+                      shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(16))),
+                      isScrollControlled: false,
+                      context: context,
+                      builder: (context) => FutureBuilder(
+                        future: _futureResult,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            return snapshot.data;
+                          } else
+                            return LinearProgressIndicator();
+                        },
+                      ),
+                    );
                   },
                 );
               },
