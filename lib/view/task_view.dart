@@ -220,7 +220,6 @@ class TaskView extends StatelessWidget {
                           title: Text('Something is not right'),
                         ),
                       );
-                      // TODO: [High] Show alert instead of ModalBottomSheet
                       await showModalBottomSheet(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(
@@ -313,8 +312,6 @@ class _MapViewState extends State<MapView> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: [High] Use full-screen dialog upon completing
-
     final centerLoc = widget
         .checkpoints[done < widget.checkpoints.length ? done : done - 1]
         .location;

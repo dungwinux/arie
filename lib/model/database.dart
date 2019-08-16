@@ -21,7 +21,7 @@ class BasicTasks extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase()
       : super(FlutterQueryExecutor.inDatabaseFolder(
-            path: 'db.sqlite', logStatements: true));
+            path: 'db.sqlite', logStatements: false));
 
   Future<List<BasicTask>> getAllTasks() => select(basicTasks).get();
   Stream<List<BasicTask>> watchAllTasks() => select(basicTasks).watch();
