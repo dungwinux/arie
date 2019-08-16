@@ -153,6 +153,13 @@ class TaskView extends StatelessWidget {
                   onPressed: () async {
                     final current = task.checkpoints[task.doneSubtask];
 
+                    if (task.doneSubtask == task.checkpoints.length) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('All task were completed.'),
+                      ));
+                      return;
+                    }
+
                     // TODO: [Medium] Process all Future at once
                     final now = DateTime.now();
                     if (now.isBefore(task.startTime)) {
@@ -240,7 +247,7 @@ class TaskView extends StatelessWidget {
                         context: context,
                         builder: (context) => AlertDialog(
                           title: Text('Congratulations'),
-                          content: Text('You\'ve completed all task'),
+                          content: Text('All tasks were completed. Well done.'),
                           actions: <Widget>[
                             FlatButton(
                               child: Text('Okay'),
