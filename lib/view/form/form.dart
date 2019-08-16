@@ -124,10 +124,12 @@ class _TaskFormState extends State<TaskForm> {
                 });
               },
               validator: (DateTime time) {
-                if (time == null) return 'Start time is required';
+                if (time == null)
+                  return 'Start time is required';
                 else if (time.isBefore(DateTime.now()))
                   return 'Start time must be after now';
-                else return null;
+                else
+                  return null;
               },
               format: _dateTimeFormat,
               readOnly: true,
@@ -209,6 +211,13 @@ class _TaskFormState extends State<TaskForm> {
               child: Text('Submit'),
               onPressed: () async {
                 if (_formKey.currentState.validate()) {
+                  if (_task.checkpoints.length == 0) {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text('At least one checkpoint is required'),
+                      behavior: SnackBarBehavior.floating,
+                    ));
+                    return;
+                  }
                   _formKey.currentState.save();
                   bool confirm = await showDialog<bool>(
                     context: context,
@@ -230,8 +239,7 @@ class _TaskFormState extends State<TaskForm> {
                       ],
                     ),
                   );
-                  if (!confirm)
-                    return;
+                  if (!confirm) return;
                   try {
                     final sendSuccess = await TaskFetch.send(_task);
                     if (sendSuccess) {
@@ -240,7 +248,8 @@ class _TaskFormState extends State<TaskForm> {
                       ));
                     } else {
                       Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('Unable to send task. Wait a moment before trying again'),
+                        content: Text(
+                            'Unable to send task. Wait a moment before trying again'),
                       ));
                     }
                   } catch (e) {

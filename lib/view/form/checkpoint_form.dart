@@ -271,7 +271,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
                       setState(() {
                         _labelController.text = result;
                       });
-                    } else {
+                    } else if (mounted) {
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text('Cannot get label from image'),
                       ));
