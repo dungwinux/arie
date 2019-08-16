@@ -1,3 +1,4 @@
+import 'package:arie/controller/geolocation.dart';
 import 'package:arie/controller/img_process.dart';
 import 'package:arie/controller/task_local.dart';
 import 'package:arie/model/checkpoint.dart';
@@ -145,7 +146,7 @@ class TaskView extends StatelessWidget {
         ],
       ),
       floatingActionButton:
-          (isAssigned && task.doneSubtask < task.checkpoints.length
+          (isAssigned
               ? Builder(
                   builder: (context) {
                     return FloatingActionButton(
@@ -164,13 +165,20 @@ class TaskView extends StatelessWidget {
                           ));
                           return;
                         }
-                        // TODO: [Medium] Check user location
+                        final current = task.checkpoints[task.doneSubtask];
+                        final location = await getLocation();
+                        final distance = getDistance(location, current.location);
+                        if (distance > 10) {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text('You are too far away from site.'),
+                          ));
+                          return;
+                        } 
                         final imgPath = await Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => CameraPage()),
                         );
                         if (imgPath == null) return;
-                        final current = task.checkpoints[task.doneSubtask];
                         final Future<Widget> _futureResult =
                             imgProcess(imgPath, mode: current.type)
                                 .then((data) async {

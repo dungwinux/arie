@@ -1,7 +1,7 @@
+import 'package:arie/controller/geolocation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong/latlong.dart';
-import 'package:location/location.dart';
 
 class LocationForm extends StatefulWidget {
   LatLng location;
@@ -14,21 +14,13 @@ class _LocationFormState extends State<LocationForm> {
   final _controller = MapController();
 
   LatLng get location {
-    // final rawLatLng = Gps.currentGps();
     return widget.location ?? LatLng(0, 0);
   }
 
   void setToCurrentLocation({context}) async {
-    final location = Location();
-    final getPermission = await location.requestPermission();
-    if (getPermission) {
-      final rawLocation = await location.getLocation();
-      _controller.move(
-          LatLng(
-            rawLocation.latitude,
-            rawLocation.longitude,
-          ),
-          _controller.zoom);
+    final location = await getLocation();
+    if (location != null) {
+      _controller.move(location, _controller.zoom);
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text('Cannot get current location'),
