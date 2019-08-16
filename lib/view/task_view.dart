@@ -218,7 +218,7 @@ class TaskView extends StatelessWidget {
                     );
 
                     // TODO: [High] Show alert instead of ModalBottomSheet
-                    showModalBottomSheet(
+                    await showModalBottomSheet(
                       shape: RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.vertical(top: Radius.circular(16))),
@@ -235,6 +235,23 @@ class TaskView extends StatelessWidget {
                         },
                       ),
                     );
+                    if (task.doneSubtask == task.checkpoints.length)
+                      await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Congratulations'),
+                          content: Text('You\'ve completed all task'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text('Okay'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        ),
+                      );
+                    // TODO: [High] Show alert when task is finish
                   },
                 );
               },
