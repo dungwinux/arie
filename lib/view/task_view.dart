@@ -159,13 +159,12 @@ class TaskView extends StatelessWidget {
                           ));
                           return;
                         } else if (now.isAfter(task.endTime)) {
-                          
                           Scaffold.of(context).showSnackBar(SnackBar(
                             content: Text('Task has already ended.'),
                           ));
                           return;
                         }
-
+                        // TODO: [Medium] Check user location
                         final imgPath = await Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => CameraPage()),

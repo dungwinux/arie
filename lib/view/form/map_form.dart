@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong/latlong.dart';
+import 'package:location/location.dart';
 
 class LocationForm extends StatefulWidget {
   LatLng location;
@@ -12,9 +13,27 @@ class LocationForm extends StatefulWidget {
 class _LocationFormState extends State<LocationForm> {
   final _controller = MapController();
 
-  LatLng get locateUser {
+  LatLng get location {
     // final rawLatLng = Gps.currentGps();
     return widget.location ?? LatLng(0, 0);
+  }
+
+  void setToCurrentLocation({context}) async {
+    final location = Location();
+    final getPermission = await location.requestPermission();
+    if (getPermission) {
+      final rawLocation = await location.getLocation();
+      _controller.move(
+          LatLng(
+            rawLocation.latitude,
+            rawLocation.longitude,
+          ),
+          _controller.zoom);
+    } else {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Cannot get current location'),
+      ));
+    }
   }
 
   @override
@@ -35,7 +54,7 @@ class _LocationFormState extends State<LocationForm> {
         alignment: Alignment.center,
         children: <Widget>[
           FlutterMap(
-            options: MapOptions(center: locateUser, zoom: 10),
+            options: MapOptions(center: location, zoom: 10),
             mapController: _controller,
             layers: [
               TileLayerOptions(
@@ -45,8 +64,21 @@ class _LocationFormState extends State<LocationForm> {
               )
             ],
           ),
-          Container(child: Icon(Icons.flag, color: Colors.blue, size: 36,)),
+          Container(
+              child: Icon(
+            Icons.flag,
+            color: Colors.blue,
+            size: 36,
+          )),
         ],
+      ),
+      floatingActionButton: Builder(
+        builder: (context) => FloatingActionButton(
+          child: Icon(Icons.gps_fixed),
+          onPressed: () {
+            setToCurrentLocation(context: context);
+          },
+        ),
       ),
     );
   }

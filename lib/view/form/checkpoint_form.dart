@@ -170,7 +170,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
               ),
             ),
             FlatButton(
-              child: Text('Set label'),
+              child: Text('Set location'),
               onPressed: () async {
                 final currentLoc = LatLng(
                   double.tryParse(_latController.text),
