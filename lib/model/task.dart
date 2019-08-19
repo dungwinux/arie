@@ -32,9 +32,9 @@ class Task {
         id = res['_id'],
         creator = res['creator'],
         description = res['description'],
-        createTime = DateTime.parse(res['createTime']),
-        startTime = DateTime.parse(res['startTime']),
-        endTime = DateTime.parse(res['endTime']),
+        createTime = DateTime.tryParse(res['createTime']),
+        startTime = DateTime.tryParse(res['startTime']),
+        endTime = DateTime.tryParse(res['endTime']),
         checkpoints = (res['checkpoints'] as Iterable)
             .map((x) => Checkpoint.fromJson(x))
             .toList(),
@@ -77,6 +77,9 @@ class Task {
       );
 
   double get percent => (doneSubtask / checkpoints.length);
+
+  List<DateTime> get getTimeline =>
+      (checkpoints.map((x) => x.doneTime).where((x) => x != null).toList());
 }
 
 class SubmitTask {

@@ -6,6 +6,7 @@ class Checkpoint {
   String label;
   String type;
   LatLng location;
+  DateTime doneTime;
 
   Checkpoint({
     this.title,
@@ -13,6 +14,7 @@ class Checkpoint {
     this.label,
     this.type,
     this.location,
+    this.doneTime,
   });
 
   Checkpoint.fromJson(Map<String, dynamic> res)
@@ -23,7 +25,8 @@ class Checkpoint {
         location = LatLng(
           double.tryParse(res['latitude'].toString()),
           double.tryParse(res['longitude'].toString()),
-        );
+        ),
+        doneTime = null;
 
   Map<String, dynamic> toJson() => {
         'title': title,
@@ -31,7 +34,6 @@ class Checkpoint {
         'label': label,
         'type': type,
         'longitude': location.longitude,
-        'latitude': location.latitude
+        'latitude': location.latitude,
       };
-
 }

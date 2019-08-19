@@ -34,12 +34,9 @@ class TaskView extends StatelessWidget {
   }
 
   Widget _bodyText(String text) {
-    return Container(
-      child: Text(
-        text,
-        textAlign: TextAlign.justify,
-      ),
-      padding: EdgeInsets.fromLTRB(10, 5, 10, 25),
+    return Text(
+      text,
+      textAlign: TextAlign.justify,
     );
   }
 
@@ -48,7 +45,10 @@ class TaskView extends StatelessWidget {
       margin: EdgeInsets.all(6),
       child: ListTile(
         title: _titleText(title),
-        subtitle: body,
+        subtitle: Padding(
+          padding: EdgeInsets.symmetric(vertical: 24),
+          child: body,
+        ),
       ),
     );
   }
@@ -68,11 +68,7 @@ class TaskView extends StatelessWidget {
       );
     } else if (now.isAfter(task.endTime)) {
       return _infoCard(
-          'Task ended',
-          Padding(
-            child: Center(child: Text(timeago.format(task.endTime))),
-            padding: EdgeInsets.all(10),
-          ));
+          'Task ended', Center(child: Text(timeago.format(task.endTime))));
     } else if (now.isAfter(task.startTime) && now.isBefore(task.endTime)) {
       return _infoCard(
         'Time left',
@@ -114,7 +110,8 @@ class TaskView extends StatelessWidget {
                   context: context,
                   builder: (context) => AlertDialog(
                     title: Text('Are you sure ?'),
-                    content: Text('The following action is irreversible!'),
+                    content: Text(
+                        'You are deleting task in local. This action is irreversible!'),
                     actions: <Widget>[
                       FlatButton(
                         child: Text('Cancel'),
@@ -143,25 +140,23 @@ class TaskView extends StatelessWidget {
       ),
       body: ListView(
         children: <Widget>[
-          _infoCard(
-            'Completion',
-            AspectRatio(
-              aspectRatio: 1.75,
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 24),
-                child: GraphView(
-                  startTime: task.startTime,
-                  endTime: task.endTime,
-                  totalTask: task.checkpoints.length,
-                  timeline: [
-                    task.endTime.subtract(Duration(hours: 10)),
-                    task.endTime.subtract(Duration(hours: 5)),
-                    task.endTime.subtract(Duration(hours: 2)),
-                  ],
-                ),
-              ),
+          if (isAssigned)
+            _infoCard(
+              'Completion',
+              task.getTimeline.isEmpty
+                  ? Center(
+                      child: Text('You have not done anything yet'),
+                    )
+                  : AspectRatio(
+                      aspectRatio: 1.75,
+                      child: GraphView(
+                        startTime: task.startTime,
+                        endTime: task.endTime,
+                        totalTask: task.checkpoints.length,
+                        timeline: task.getTimeline,
+                      ),
+                    ),
             ),
-          ),
           _renderClock(),
           MapView(
             task.checkpoints,
@@ -218,7 +213,10 @@ class TaskView extends StatelessWidget {
                           );
                         }
                         if (res.any((x) => x == current.label)) {
+                          task.checkpoints[task.doneSubtask].doneTime =
+                              DateTime.now();
                           task.doneSubtask += 1;
+                          // Update current checkpoint
                           await taskDB.updateTask(task.toBasicTask());
                           _mapKey.currentState.increase();
 
