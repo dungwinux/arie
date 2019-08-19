@@ -3,6 +3,7 @@ import 'package:arie/controller/img_process.dart';
 import 'package:arie/controller/task_local.dart';
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
+import 'package:arie/view/graph_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:image_picker/image_picker.dart';
@@ -142,6 +143,25 @@ class TaskView extends StatelessWidget {
       ),
       body: ListView(
         children: <Widget>[
+          _infoCard(
+            'Completion',
+            AspectRatio(
+              aspectRatio: 1.75,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 24),
+                child: GraphView(
+                  startTime: task.startTime,
+                  endTime: task.endTime,
+                  totalTask: task.checkpoints.length,
+                  timeline: [
+                    task.endTime.subtract(Duration(hours: 10)),
+                    task.endTime.subtract(Duration(hours: 5)),
+                    task.endTime.subtract(Duration(hours: 2)),
+                  ],
+                ),
+              ),
+            ),
+          ),
           _renderClock(),
           MapView(
             task.checkpoints,
