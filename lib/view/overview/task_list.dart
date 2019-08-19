@@ -111,15 +111,7 @@ class _TaskListState extends State<TaskList> {
               )
               .toList();
 
-          return Column(
-            children: [
-              // OverallProgress(
-              //   _formatList.length,
-              //   _formatList.where((x) => x.percent == 1).length,
-              // ),
-              Card(child: Column(children: renderList)),
-            ],
-          );
+          return Card(child: Column(children: renderList));
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: CircularProgressIndicator(),
