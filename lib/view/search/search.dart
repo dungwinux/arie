@@ -55,7 +55,7 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
     return PagewiseListView(
       pageSize: 10,
       pageFuture: (int pageIndex) {
-        return TaskFetch.fetchAll(query, index: 1 + pageIndex * 10);
+        return TaskFetch.instance.fetchAll(query, index: 1 + pageIndex * 10);
       },
       retryBuilder: (context, callback) {
         return RaisedButton(child: Text('Retry'), onPressed: () => callback());

@@ -27,7 +27,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
     checkpoint = widget.checkpoint ??
         Checkpoint(
           location: LatLng(0, 0),
-          type: 'barcode',
+          type: supportType.first,
         );
     pw = ProgressDialog(context, ProgressDialogType.Normal);
     _labelController = TextEditingController(text: checkpoint.label);
@@ -85,12 +85,12 @@ class _CheckpointFormState extends State<CheckpointForm> {
                   hintText: 'Checkpoint title',
                   labelText: 'Title',
                 ),
+                initialValue: checkpoint.title,
                 keyboardType: TextInputType.text,
                 validator: (value) {
                   if (value.isEmpty) return 'Title required';
                   return null;
                 },
-                initialValue: checkpoint.title,
                 onSaved: (String res) {
                   setState(() {
                     checkpoint.title = res;

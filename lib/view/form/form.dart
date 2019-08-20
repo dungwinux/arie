@@ -29,34 +29,36 @@ class _TaskFormState extends State<TaskForm> {
   final _task = SubmitTask(checkpoints: []);
 
   Widget _renderCheckpoints() {
-    List<Widget> tileList = [];
-    for (int index = 0; index < _task.checkpoints.length; index++) {
+    List<Widget> tileList =
+        List.generate(_task.checkpoints.length, (int index) {
       final x = _task.checkpoints[index];
-      tileList.add(
-        Dismissible(
-          key: Key(x.hashCode.toString()),
-          onDismissed: (direction) {
-            _task.checkpoints.removeAt(index);
-          },
-          child: Card(
-            child: ListTile(
-              title: Text(x.title),
-              subtitle: Text(x.description),
-              onTap: () async {
-                final Checkpoint result =
-                    await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => CheckpointForm(checkpoint: x),
-                ));
-                if (result != null)
-                  setState(() {
-                    _task.checkpoints[index] = result;
-                  });
-              },
-            ),
+      return Dismissible(
+        key: Key(x.hashCode.toString()),
+        onDismissed: (direction) {
+          _task.checkpoints.removeAt(index);
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text('Deleted ${x.title}'),
+            behavior: SnackBarBehavior.floating,
+          ));
+        },
+        child: Card(
+          child: ListTile(
+            title: Text(x.title),
+            subtitle: Text(x.description),
+            onTap: () async {
+              final Checkpoint result =
+                  await Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => CheckpointForm(checkpoint: x),
+              ));
+              if (result != null)
+                setState(() {
+                  _task.checkpoints[index] = result;
+                });
+            },
           ),
         ),
       );
-    }
+    });
     return Column(
       children: tileList,
     );
@@ -217,10 +219,15 @@ class _TaskFormState extends State<TaskForm> {
                   await Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => CheckpointForm(),
               ));
-              if (result != null)
+              if (result != null) {
                 setState(() {
                   _task.checkpoints.add(result);
                 });
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text('Added ${result.title}'),
+                  behavior: SnackBarBehavior.floating,
+                ));
+              }
             },
           ),
           Padding(
@@ -258,7 +265,7 @@ class _TaskFormState extends State<TaskForm> {
                   );
                   if (!confirm) return;
                   try {
-                    final sendSuccess = await TaskFetch.send(_task);
+                    final sendSuccess = await TaskFetch.instance.send(_task);
                     if (sendSuccess) {
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text('Success'),

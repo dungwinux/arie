@@ -108,7 +108,6 @@ class SubmitTask {
 
   Map<String, dynamic> toJson() => {
         'name': name,
-        'creator': creator,
         'description': description,
         'startTime': startTime.toIso8601String(),
         'endTime': endTime.toIso8601String(),

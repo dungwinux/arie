@@ -4,11 +4,11 @@ import 'package:arie/model/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:arie/model/task.dart';
 
-class TaskFetch {
-  static final _serverHost = 'arie-backend.herokuapp.com';
-  static final request = http.Client();
+class _TaskFetchInternal {
+  final _serverHost = 'arie-backend.herokuapp.com';
+  final request = http.Client();
 
-  static Future<List<Task>> fetchAll(
+  Future<List<Task>> fetchAll(
     String query, {
     int index = 0,
     int count = 10,
@@ -34,7 +34,7 @@ class TaskFetch {
     }
   }
 
-  static Future<Task> fetch(String id) async {
+  Future<Task> fetch(String id) async {
     final Uri url = Uri.https(
       _serverHost,
       '/api/tasks/$id/',
@@ -48,7 +48,7 @@ class TaskFetch {
     }
   }
 
-  static Future<bool> send(SubmitTask task) async {
+  Future<bool> send(SubmitTask task) async {
     final Uri url = Uri.https(
       _serverHost,
       '/api/tasks/',
@@ -71,7 +71,7 @@ class TaskFetch {
     }
   }
 
-  static Future<bool> login(User user) async {
+  Future<bool> login(User user) async {
     final Uri url = Uri.https(_serverHost, '/api/tasks/user/');
     final content = json.encode(user.toJson());
     try {
@@ -85,4 +85,18 @@ class TaskFetch {
       return Future.error('Failed to login');
     }
   }
+
+  Future<bool> logout() async {
+    final Uri url = Uri.https(_serverHost, '/api/tasks/user/');
+    try {
+      final respond = await request.delete(url);
+      return respond.statusCode == 200;
+    } catch (e) {
+      return Future.error('Failed to logout');
+    }
+  }
+}
+
+class TaskFetch {
+  static final instance = _TaskFetchInternal();
 }
