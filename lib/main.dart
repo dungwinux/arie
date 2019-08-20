@@ -1,4 +1,5 @@
 import 'package:arie/view/form/form.dart';
+import 'package:arie/view/login.dart';
 import 'package:arie/view/overview/overview.dart';
 import 'package:arie/view/search/search.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.amber,
       ),
       home: MyHomePage(),
+      builder: (context, widget) {
+        return LoginScreen(
+          child: widget,
+        );
+      },
     );
   }
 }
@@ -92,6 +98,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 applicationName: 'Arie',
                 applicationVersion: 'Alpha',
               );
+            },
+          ),
+          ListTile(
+            title: Text('Logout'),
+            onTap: () {
+              Login.of(context).signOut();
             },
           ),
         ],

@@ -2,6 +2,7 @@ import 'package:arie/controller/task_fetch.dart';
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
 import 'package:arie/view/form/checkpoint_form.dart';
+import 'package:arie/view/login.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -25,7 +26,13 @@ class TaskForm extends StatefulWidget {
 
 class _TaskFormState extends State<TaskForm> {
   final _formKey = GlobalKey<FormState>();
-  final _task = SubmitTask(creator: 'Anonymous', checkpoints: []);
+  final _task = SubmitTask(checkpoints: []);
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   Widget _renderCheckpoints() {
     List<Widget> tileList = [];
@@ -63,6 +70,7 @@ class _TaskFormState extends State<TaskForm> {
 
   @override
   Widget build(BuildContext context) {
+    _task.creator = Login.of(context).user;
     final _dateTimeFormat = DateFormat('EE, MMM d, y hh:mm');
     final Future<DateTime> Function(BuildContext, DateTime) _onShowPicker =
         (context, currentValue) async {
@@ -97,6 +105,7 @@ class _TaskFormState extends State<TaskForm> {
                 labelText: 'Name',
               ),
               autofocus: true,
+              initialValue: _task.name,
               keyboardType: TextInputType.text,
               validator: (value) {
                 if (value.isEmpty) return 'Name required';
@@ -107,6 +116,20 @@ class _TaskFormState extends State<TaskForm> {
                   _task.name = res;
                 });
               },
+            ),
+            padding: EdgeInsets.all(16),
+          ),
+          Padding(
+            child: TextFormField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(width: 2),
+                ),
+                labelText: 'Creator',
+              ),
+              initialValue: _task.creator.name,
+              keyboardType: TextInputType.text,
+              enabled: false,
             ),
             padding: EdgeInsets.all(16),
           ),

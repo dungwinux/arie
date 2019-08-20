@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:arie/model/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:arie/model/task.dart';
 
@@ -66,6 +67,21 @@ class TaskFetch {
       return respond.statusCode == 200;
     } catch (e) {
       return Future.error('Failed to send data to server');
+    }
+  }
+
+  static Future<bool> login(User user) async {
+    final Uri url = Uri.https(_serverHost, '/api/tasks/user/');
+    final content = json.encode(user.toJson());
+    try {
+      final respond = await http.post(
+        url,
+        body: content,
+        headers: {'Content-Type': 'application/json'},
+      );
+      return respond.statusCode == 200;
+    } catch (e) {
+      return Future.error('Failed to login');
     }
   }
 }

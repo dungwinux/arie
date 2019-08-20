@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/database.dart';
+import 'package:arie/model/user.dart';
 import 'package:flutter/foundation.dart';
 
 class Task {
@@ -85,7 +86,7 @@ class Task {
 class SubmitTask {
   String name;
   String description;
-  String creator;
+  User creator;
   DateTime startTime;
   DateTime endTime;
   List<Checkpoint> checkpoints = <Checkpoint>[];
