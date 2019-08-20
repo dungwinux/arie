@@ -24,6 +24,7 @@ class _LocationFormState extends State<LocationForm> {
     } else {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text('Cannot get current location'),
+        behavior: SnackBarBehavior.floating,
       ));
     }
   }

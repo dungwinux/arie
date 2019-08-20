@@ -277,6 +277,7 @@ class TaskView extends StatelessWidget {
                     } catch (e) {
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text(e is String ? e : 'Unknown error'),
+                        behavior: SnackBarBehavior.floating,
                       ));
                       pw.hide();
                     }

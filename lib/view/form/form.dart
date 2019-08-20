@@ -268,16 +268,19 @@ class _TaskFormState extends State<TaskForm> {
                     if (sendSuccess) {
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text('Success'),
+                        behavior: SnackBarBehavior.floating,
                       ));
                     } else {
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text(
                             'Unable to send task. Wait a moment before trying again'),
+                        behavior: SnackBarBehavior.floating,
                       ));
                     }
                   } catch (e) {
                     Scaffold.of(context).showSnackBar(SnackBar(
                       content: Text('Error: $e'),
+                      behavior: SnackBarBehavior.floating,
                     ));
                   }
                 }

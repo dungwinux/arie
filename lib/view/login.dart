@@ -110,6 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           // TODO: [Medium] Add error detail
                           Scaffold.of(context).showSnackBar(SnackBar(
                             content: Text(e),
+                            behavior: SnackBarBehavior.floating,
                           ));
                         }
                       },

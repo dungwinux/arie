@@ -100,15 +100,21 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
               onPressed: () async {
                 if (await taskDB.isTaskExist(_task.id))
                   Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text('${_task.name} was already added')));
+                    content: Text('${_task.name} was already added'),
+                    behavior: SnackBarBehavior.floating,
+                  ));
                 else
                   try {
                     await taskDB.insertTask(_task.toBasicTask());
-                    Scaffold.of(context).showSnackBar(
-                        SnackBar(content: Text('Added ${_task.name}')));
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text('Added ${_task.name}'),
+                      behavior: SnackBarBehavior.floating,
+                    ));
                   } catch (e) {
-                    Scaffold.of(context).showSnackBar(
-                        SnackBar(content: Text('Something is not right: $e')));
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text('Something is not right: $e'),
+                      behavior: SnackBarBehavior.floating,
+                    ));
                   }
               },
             ),

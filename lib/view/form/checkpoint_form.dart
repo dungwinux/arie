@@ -274,6 +274,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
                     } else if (mounted) {
                       Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text('Cannot get label from image'),
+                        behavior: SnackBarBehavior.floating,
                       ));
                     }
                     pw.hide();
