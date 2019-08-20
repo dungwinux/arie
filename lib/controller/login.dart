@@ -1,3 +1,4 @@
+import 'package:arie/controller/task_fetch.dart';
 import 'package:arie/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -38,6 +39,7 @@ class LoginState extends State<Login> {
     _googleSignIn.onCurrentUserChanged
         .listen((GoogleSignInAccount account) async {
       if (account == null) {
+        await TaskFetch.instance.logout();
         setState(() {
           // Update account
           user = null;
@@ -45,13 +47,15 @@ class LoginState extends State<Login> {
         });
       } else {
         final _auth = await account.authentication;
-        setState(() {
-          user = User(
+        final res = User(
             accessToken: _auth.accessToken,
             name: account.displayName,
             email: account.email,
             imageUri: account.photoUrl,
           );
+        await TaskFetch.instance.login(res);
+        setState(() {
+          user = res;
           isSignedIn = true;
         });
       }

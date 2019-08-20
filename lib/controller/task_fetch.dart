@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:arie/model/user.dart';
-import 'package:http/http.dart' as http;
+import 'package:cookie_jar/cookie_jar.dart';
+import 'package:dio/dio.dart';
 import 'package:arie/model/task.dart';
 
 class _TaskFetchInternal {
   final _serverHost = 'arie-backend.herokuapp.com';
-  final request = http.Client();
+  final request = Dio()..interceptors.add(CookieManager(CookieJar()));
 
   Future<List<Task>> fetchAll(
     String query, {
@@ -24,8 +25,8 @@ class _TaskFetchInternal {
     );
 
     try {
-      final rawResult = await request.get(url);
-      final List<Task> output = (jsonDecode(rawResult.body) as Iterable)
+      final rawResult = await request.getUri(url);
+      final List<Task> output = (jsonDecode(rawResult.data) as Iterable)
           .map((x) => Task.fromJson(x))
           .toList();
       return output;
@@ -40,8 +41,8 @@ class _TaskFetchInternal {
       '/api/tasks/$id/',
     );
     try {
-      final rawResult = await request.get(url);
-      final output = Task.fromJson(jsonDecode(rawResult.body));
+      final rawResult = await request.getUri(url);
+      final output = Task.fromJson(jsonDecode(rawResult.data));
       return output;
     } catch (e) {
       return Future.error('Failed to get data from server');
@@ -60,11 +61,7 @@ class _TaskFetchInternal {
         return item.toJson();
     });
     try {
-      final respond = await request.post(
-        url,
-        body: content,
-        headers: {'Content-Type': 'application/json'},
-      );
+      final respond = await request.postUri(url, data: content);
       return respond.statusCode == 200;
     } catch (e) {
       return Future.error('Failed to send data to server');
@@ -75,11 +72,7 @@ class _TaskFetchInternal {
     final Uri url = Uri.https(_serverHost, '/api/tasks/user/');
     final content = json.encode(user.toJson());
     try {
-      final respond = await request.post(
-        url,
-        body: content,
-        headers: {'Content-Type': 'application/json'},
-      );
+      final respond = await request.postUri(url, data: content);
       return respond.statusCode == 200;
     } catch (e) {
       return Future.error('Failed to login');
@@ -89,7 +82,7 @@ class _TaskFetchInternal {
   Future<bool> logout() async {
     final Uri url = Uri.https(_serverHost, '/api/tasks/user/');
     try {
-      final respond = await request.delete(url);
+      final respond = await request.deleteUri(url);
       return respond.statusCode == 200;
     } catch (e) {
       return Future.error('Failed to logout');
