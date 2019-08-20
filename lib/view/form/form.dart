@@ -28,12 +28,6 @@ class _TaskFormState extends State<TaskForm> {
   final _formKey = GlobalKey<FormState>();
   final _task = SubmitTask(checkpoints: []);
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
   Widget _renderCheckpoints() {
     List<Widget> tileList = [];
     for (int index = 0; index < _task.checkpoints.length; index++) {

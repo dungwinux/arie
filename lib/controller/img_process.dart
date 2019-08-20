@@ -1,6 +1,6 @@
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 
-final List<String> supportType = ['barcode', 'object'];
+final List<String> supportType = ['object', 'barcode'];
 
 Future<List<String>> imgProcess(String imagePath, {String mode}) {
   final image = FirebaseVisionImage.fromFilePath(imagePath);
@@ -15,9 +15,8 @@ Future<List<String>> imgProcess(String imagePath, {String mode}) {
   }
 }
 
+/// Return all barcode value visible on image
 Future<List<String>> mlBarcodeScan(FirebaseVisionImage image) async {
-  /// Return all barcode value visible on image
-
   final BarcodeDetector barcodeDetector =
       FirebaseVision.instance.barcodeDetector();
   final List<Barcode> barcodes = await barcodeDetector.detectInImage(image);
@@ -25,13 +24,12 @@ Future<List<String>> mlBarcodeScan(FirebaseVisionImage image) async {
   return barcodes.map((x) => x.rawValue).toList();
 }
 
+/// Return label with confidence > 0.5
 Future<List<String>> mlObjectLabel(FirebaseVisionImage image) async {
-  /// Return label with confidence > 0.5
-
   final ImageLabeler imageLabeler = FirebaseVision.instance.imageLabeler();
   final List<ImageLabel> labels = await imageLabeler.processImage(image);
   imageLabeler.close();
-  
+
   return labels
       .where((x) => x.confidence > 0.5)
       .map((ImageLabel x) => x.text)

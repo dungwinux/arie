@@ -5,6 +5,9 @@ import 'package:arie/view/overview/overview.dart';
 import 'package:arie/view/search/search.dart';
 import 'package:flutter/material.dart';
 
+// TODO: [High] Sign the app
+// https://flutter.dev/docs/deployment/android
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {

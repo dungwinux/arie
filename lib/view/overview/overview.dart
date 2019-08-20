@@ -18,7 +18,6 @@ class _OverviewState extends State<Overview> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: [Medium] Adapt SliverAppBar
     return ListView(children: _widgetList);
   }
 }

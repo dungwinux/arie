@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
 
 class SearchMenuDelegate extends SearchDelegate<Task> {
-  // TODO: [Low] Add History
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -26,7 +25,7 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
       icon: Icon(Icons.arrow_back),
       onPressed: () {
         //Take control back to previous page
-        this.close(context, null);
+        close(context, null);
       },
     );
   }
