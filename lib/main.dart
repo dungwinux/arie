@@ -1,5 +1,6 @@
+import 'package:arie/controller/login.dart';
 import 'package:arie/view/form/form.dart';
-import 'package:arie/view/login.dart';
+import 'package:arie/view/login/login_screen.dart';
 import 'package:arie/view/overview/overview.dart';
 import 'package:arie/view/search/search.dart';
 import 'package:flutter/material.dart';

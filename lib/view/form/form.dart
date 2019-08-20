@@ -2,7 +2,7 @@ import 'package:arie/controller/task_fetch.dart';
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
 import 'package:arie/view/form/checkpoint_form.dart';
-import 'package:arie/view/login.dart';
+import 'package:arie/controller/login.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

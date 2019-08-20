@@ -1,7 +1,7 @@
 import 'package:arie/controller/task_local.dart';
 import 'package:arie/model/database.dart';
 import 'package:arie/model/task.dart';
-import 'package:arie/view/task_view.dart';
+import 'package:arie/view/content/task_view.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 

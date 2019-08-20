@@ -3,7 +3,7 @@ import 'package:arie/controller/img_process.dart';
 import 'package:arie/controller/task_local.dart';
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
-import 'package:arie/view/graph_view.dart';
+import 'package:arie/view/content/graph_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:image_picker/image_picker.dart';
