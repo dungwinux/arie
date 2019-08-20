@@ -55,7 +55,56 @@ class _MyHomePageState extends State<MyHomePage> {
             IconButton(
               icon: Icon(Icons.menu),
               onPressed: () {
-                // TODO: [Medium] Remove this, or show up BottomSheet
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return Scaffold(
+                      body: Column(
+                        children: <Widget>[
+                          ListTile(
+                            leading: CircleAvatar(
+                              child: Builder(
+                                builder: (context) {
+                                  final loc = Login.of(context).user.imageUri;
+                                  // TODO: [Low] Handle onNetworkFailed
+                                  if (loc != null)
+                                    return Image.network(loc);
+                                  else
+                                    return Icon(Icons.account_circle);
+                                },
+                              ),
+                            ),
+                            title: Text(Login.of(context).user.name),
+                            subtitle: Text(Login.of(context).user.email),
+                            trailing: FlatButton(
+                              child: Text('Sign out'),
+                              onPressed: () {
+                                Login.of(context).signOut();
+                              },
+                            ),
+                          ),
+                          Divider(),
+                          ListTile(
+                            title: Text('About'),
+                            onTap: () {
+                              showAboutDialog(
+                                context: context,
+                                applicationName: 'Arie',
+                                applicationVersion: 'Beta',
+                                applicationLegalese: 'Made by Kori Team',
+                                applicationIcon: Image.asset(
+                                  'images/icon.png',
+                                  width: 48,
+                                  height: 48,
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
               },
             ),
             Container(
@@ -73,41 +122,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      drawer: Drawer(
-          child: ListView(
-        children: <Widget>[
-          DrawerHeader(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('images/landscape.jpg'), fit: BoxFit.cover),
-            ),
-            child: Align(
-              child: Text(
-                'Arie',
-                style: TextStyle(
-                    fontSize: 36, color: Color.fromRGBO(255, 255, 255, 32)),
-              ),
-              alignment: Alignment.bottomLeft,
-            ),
-          ),
-          ListTile(
-            title: Text('About'),
-            onTap: () {
-              showAboutDialog(
-                context: context,
-                applicationName: 'Arie',
-                applicationVersion: 'Alpha',
-              );
-            },
-          ),
-          ListTile(
-            title: Text('Logout'),
-            onTap: () {
-              Login.of(context).signOut();
-            },
-          ),
-        ],
-      )),
     );
   }
 }

@@ -51,6 +51,7 @@ class LoginState extends State<Login> {
             accessToken: _auth.accessToken,
             name: account.displayName,
             email: account.email,
+            imageUri: account.photoUrl,
           );
           isSignedIn = true;
         });
@@ -101,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Image.asset('images/icon.png', height: 256, width: 256),
                     SignInButton(
                       Buttons.Google,
-                      text: "Sign up with Google",
+                      text: 'Sign up with Google',
                       onPressed: () async {
                         try {
                           Login.of(context).signIn();
