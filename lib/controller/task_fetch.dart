@@ -6,6 +6,7 @@ import 'package:arie/model/task.dart';
 
 class TaskFetch {
   static final _serverHost = 'arie-backend.herokuapp.com';
+  static final request = http.Client();
 
   static Future<List<Task>> fetchAll(
     String query, {
@@ -23,7 +24,7 @@ class TaskFetch {
     );
 
     try {
-      final rawResult = await http.get(url);
+      final rawResult = await request.get(url);
       final List<Task> output = (jsonDecode(rawResult.body) as Iterable)
           .map((x) => Task.fromJson(x))
           .toList();
@@ -39,7 +40,7 @@ class TaskFetch {
       '/api/tasks/$id/',
     );
     try {
-      final rawResult = await http.get(url);
+      final rawResult = await request.get(url);
       final output = Task.fromJson(jsonDecode(rawResult.body));
       return output;
     } catch (e) {
@@ -59,7 +60,7 @@ class TaskFetch {
         return item.toJson();
     });
     try {
-      final respond = await http.post(
+      final respond = await request.post(
         url,
         body: content,
         headers: {'Content-Type': 'application/json'},
@@ -74,7 +75,7 @@ class TaskFetch {
     final Uri url = Uri.https(_serverHost, '/api/tasks/user/');
     final content = json.encode(user.toJson());
     try {
-      final respond = await http.post(
+      final respond = await request.post(
         url,
         body: content,
         headers: {'Content-Type': 'application/json'},
