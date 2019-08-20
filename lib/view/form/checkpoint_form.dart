@@ -54,14 +54,21 @@ class _CheckpointFormState extends State<CheckpointForm> {
       appBar: AppBar(
         title: Text('Checkpoint editor'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-                _formKey.currentState.save();
-                Navigator.of(context).pop(checkpoint);
-              }
-            },
+          Builder(
+            builder: (context) => IconButton(
+              icon: Icon(Icons.save),
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  _formKey.currentState.save();
+                  Navigator.of(context).pop(checkpoint);
+                } else {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text('Please fill in correctly'),
+                    behavior: SnackBarBehavior.floating,
+                  ));
+                }
+              },
+            ),
           )
         ],
       ),

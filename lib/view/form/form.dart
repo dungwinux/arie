@@ -277,6 +277,11 @@ class _TaskFormState extends State<TaskForm> {
                       behavior: SnackBarBehavior.floating,
                     ));
                   }
+                } else {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text('Please fill in correctly'),
+                    behavior: SnackBarBehavior.floating,
+                  ));
                 }
               },
             ),
