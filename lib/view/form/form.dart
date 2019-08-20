@@ -71,7 +71,7 @@ class _TaskFormState extends State<TaskForm> {
   @override
   Widget build(BuildContext context) {
     _task.creator = Login.of(context).user;
-    final _dateTimeFormat = DateFormat('EE, MMM d, y hh:mm');
+    final _dateTimeFormat = DateFormat('EE, MMM d, y HH:mm');
     final Future<DateTime> Function(BuildContext, DateTime) _onShowPicker =
         (context, currentValue) async {
       final newDate = await showDatePicker(
