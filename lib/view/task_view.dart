@@ -96,7 +96,7 @@ class TaskView extends StatelessWidget {
           children: <Widget>[
             Text(task.name),
             Text(
-              'by ${task.creator}',
+              'by ${task.creatorName}',
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
             )
           ],

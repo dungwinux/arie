@@ -11,27 +11,30 @@ class Task {
   String description;
   List<Checkpoint> checkpoints;
   int doneSubtask;
-  String creator;
+  String creatorName;
+  String creatorId;
   DateTime startTime;
   DateTime endTime;
   DateTime createTime;
 
-  Task(
-      {@required this.name,
-      @required this.id,
-      @required this.checkpoints,
-      @required this.creator,
-      @required this.createTime,
-      @required this.startTime,
-      @required this.endTime,
-      this.description: '',
-      this.doneSubtask: 0})
-      : assert(checkpoints.length > 0);
+  Task({
+    @required this.name,
+    @required this.id,
+    @required this.checkpoints,
+    @required this.creatorName,
+    @required this.creatorId,
+    @required this.createTime,
+    @required this.startTime,
+    @required this.endTime,
+    this.description: '',
+    this.doneSubtask: 0,
+  }) : assert(checkpoints.length > 0);
 
   Task.fromJson(Map<String, dynamic> res)
       : name = res['name'],
         id = res['_id'],
-        creator = res['creator'],
+        creatorId = res['creatorID'],
+        creatorName = res['creatorName'],
         description = res['description'],
         createTime = DateTime.tryParse(res['createTime']),
         startTime = DateTime.tryParse(res['startTime']),
@@ -44,7 +47,8 @@ class Task {
   Map<String, dynamic> toJson() => {
         'name': name,
         'id': id,
-        'creator': creator,
+        'creatorID': creatorId,
+        'creatorName': creatorName,
         'description': description,
         'createTime': createTime.toIso8601String(),
         'startTime': startTime.toIso8601String(),
@@ -55,7 +59,8 @@ class Task {
   Task.fromBasicTask(BasicTask task)
       : name = task.name,
         id = task.id,
-        creator = task.creator,
+        creatorName = task.creatorName,
+        creatorId = task.creatorId,
         description = task.description,
         createTime = task.createTime,
         startTime = task.startTime,
@@ -68,7 +73,8 @@ class Task {
   BasicTask toBasicTask() => BasicTask(
         name: name,
         id: id,
-        creator: creator,
+        creatorId: creatorId,
+        creatorName: creatorName,
         description: description,
         createTime: createTime,
         startTime: startTime,

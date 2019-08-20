@@ -12,7 +12,8 @@ class BasicTask extends DataClass implements Insertable<BasicTask> {
   final int doneSubtask;
   final String name;
   final String description;
-  final String creator;
+  final String creatorId;
+  final String creatorName;
   final DateTime createTime;
   final DateTime startTime;
   final DateTime endTime;
@@ -22,7 +23,8 @@ class BasicTask extends DataClass implements Insertable<BasicTask> {
       @required this.doneSubtask,
       @required this.name,
       @required this.description,
-      @required this.creator,
+      @required this.creatorId,
+      @required this.creatorName,
       @required this.createTime,
       @required this.startTime,
       @required this.endTime,
@@ -40,8 +42,10 @@ class BasicTask extends DataClass implements Insertable<BasicTask> {
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
       description: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}description']),
-      creator:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}creator']),
+      creatorId: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}creator_id']),
+      creatorName: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}creator_name']),
       createTime: dateTimeType
           .mapFromDatabaseResponse(data['${effectivePrefix}create_time']),
       startTime: dateTimeType
@@ -59,7 +63,8 @@ class BasicTask extends DataClass implements Insertable<BasicTask> {
       doneSubtask: serializer.fromJson<int>(json['doneSubtask']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String>(json['description']),
-      creator: serializer.fromJson<String>(json['creator']),
+      creatorId: serializer.fromJson<String>(json['creatorId']),
+      creatorName: serializer.fromJson<String>(json['creatorName']),
       createTime: serializer.fromJson<DateTime>(json['createTime']),
       startTime: serializer.fromJson<DateTime>(json['startTime']),
       endTime: serializer.fromJson<DateTime>(json['endTime']),
@@ -74,7 +79,8 @@ class BasicTask extends DataClass implements Insertable<BasicTask> {
       'doneSubtask': serializer.toJson<int>(doneSubtask),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String>(description),
-      'creator': serializer.toJson<String>(creator),
+      'creatorId': serializer.toJson<String>(creatorId),
+      'creatorName': serializer.toJson<String>(creatorName),
       'createTime': serializer.toJson<DateTime>(createTime),
       'startTime': serializer.toJson<DateTime>(startTime),
       'endTime': serializer.toJson<DateTime>(endTime),
@@ -93,9 +99,12 @@ class BasicTask extends DataClass implements Insertable<BasicTask> {
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
-      creator: creator == null && nullToAbsent
+      creatorId: creatorId == null && nullToAbsent
           ? const Value.absent()
-          : Value(creator),
+          : Value(creatorId),
+      creatorName: creatorName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(creatorName),
       createTime: createTime == null && nullToAbsent
           ? const Value.absent()
           : Value(createTime),
@@ -116,7 +125,8 @@ class BasicTask extends DataClass implements Insertable<BasicTask> {
           int doneSubtask,
           String name,
           String description,
-          String creator,
+          String creatorId,
+          String creatorName,
           DateTime createTime,
           DateTime startTime,
           DateTime endTime,
@@ -126,7 +136,8 @@ class BasicTask extends DataClass implements Insertable<BasicTask> {
         doneSubtask: doneSubtask ?? this.doneSubtask,
         name: name ?? this.name,
         description: description ?? this.description,
-        creator: creator ?? this.creator,
+        creatorId: creatorId ?? this.creatorId,
+        creatorName: creatorName ?? this.creatorName,
         createTime: createTime ?? this.createTime,
         startTime: startTime ?? this.startTime,
         endTime: endTime ?? this.endTime,
@@ -139,7 +150,8 @@ class BasicTask extends DataClass implements Insertable<BasicTask> {
           ..write('doneSubtask: $doneSubtask, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
-          ..write('creator: $creator, ')
+          ..write('creatorId: $creatorId, ')
+          ..write('creatorName: $creatorName, ')
           ..write('createTime: $createTime, ')
           ..write('startTime: $startTime, ')
           ..write('endTime: $endTime, ')
@@ -157,10 +169,12 @@ class BasicTask extends DataClass implements Insertable<BasicTask> {
                       $mrjc(
                           $mrjc(
                               $mrjc(
-                                  $mrjc(0, id.hashCode), doneSubtask.hashCode),
-                              name.hashCode),
-                          description.hashCode),
-                      creator.hashCode),
+                                  $mrjc($mrjc(0, id.hashCode),
+                                      doneSubtask.hashCode),
+                                  name.hashCode),
+                              description.hashCode),
+                          creatorId.hashCode),
+                      creatorName.hashCode),
                   createTime.hashCode),
               startTime.hashCode),
           endTime.hashCode),
@@ -173,7 +187,8 @@ class BasicTask extends DataClass implements Insertable<BasicTask> {
           other.doneSubtask == doneSubtask &&
           other.name == name &&
           other.description == description &&
-          other.creator == creator &&
+          other.creatorId == creatorId &&
+          other.creatorName == creatorName &&
           other.createTime == createTime &&
           other.startTime == startTime &&
           other.endTime == endTime &&
@@ -185,7 +200,8 @@ class BasicTasksCompanion extends UpdateCompanion<BasicTask> {
   final Value<int> doneSubtask;
   final Value<String> name;
   final Value<String> description;
-  final Value<String> creator;
+  final Value<String> creatorId;
+  final Value<String> creatorName;
   final Value<DateTime> createTime;
   final Value<DateTime> startTime;
   final Value<DateTime> endTime;
@@ -195,7 +211,8 @@ class BasicTasksCompanion extends UpdateCompanion<BasicTask> {
     this.doneSubtask = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
-    this.creator = const Value.absent(),
+    this.creatorId = const Value.absent(),
+    this.creatorName = const Value.absent(),
     this.createTime = const Value.absent(),
     this.startTime = const Value.absent(),
     this.endTime = const Value.absent(),
@@ -254,13 +271,27 @@ class $BasicTasksTable extends BasicTasks
     );
   }
 
-  final VerificationMeta _creatorMeta = const VerificationMeta('creator');
-  GeneratedTextColumn _creator;
+  final VerificationMeta _creatorIdMeta = const VerificationMeta('creatorId');
+  GeneratedTextColumn _creatorId;
   @override
-  GeneratedTextColumn get creator => _creator ??= _constructCreator();
-  GeneratedTextColumn _constructCreator() {
+  GeneratedTextColumn get creatorId => _creatorId ??= _constructCreatorId();
+  GeneratedTextColumn _constructCreatorId() {
     return GeneratedTextColumn(
-      'creator',
+      'creator_id',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _creatorNameMeta =
+      const VerificationMeta('creatorName');
+  GeneratedTextColumn _creatorName;
+  @override
+  GeneratedTextColumn get creatorName =>
+      _creatorName ??= _constructCreatorName();
+  GeneratedTextColumn _constructCreatorName() {
+    return GeneratedTextColumn(
+      'creator_name',
       $tableName,
       false,
     );
@@ -323,7 +354,8 @@ class $BasicTasksTable extends BasicTasks
         doneSubtask,
         name,
         description,
-        creator,
+        creatorId,
+        creatorName,
         createTime,
         startTime,
         endTime,
@@ -362,11 +394,17 @@ class $BasicTasksTable extends BasicTasks
     } else if (description.isRequired && isInserting) {
       context.missing(_descriptionMeta);
     }
-    if (d.creator.present) {
-      context.handle(_creatorMeta,
-          creator.isAcceptableValue(d.creator.value, _creatorMeta));
-    } else if (creator.isRequired && isInserting) {
-      context.missing(_creatorMeta);
+    if (d.creatorId.present) {
+      context.handle(_creatorIdMeta,
+          creatorId.isAcceptableValue(d.creatorId.value, _creatorIdMeta));
+    } else if (creatorId.isRequired && isInserting) {
+      context.missing(_creatorIdMeta);
+    }
+    if (d.creatorName.present) {
+      context.handle(_creatorNameMeta,
+          creatorName.isAcceptableValue(d.creatorName.value, _creatorNameMeta));
+    } else if (creatorName.isRequired && isInserting) {
+      context.missing(_creatorNameMeta);
     }
     if (d.createTime.present) {
       context.handle(_createTimeMeta,
@@ -420,8 +458,11 @@ class $BasicTasksTable extends BasicTasks
     if (d.description.present) {
       map['description'] = Variable<String, StringType>(d.description.value);
     }
-    if (d.creator.present) {
-      map['creator'] = Variable<String, StringType>(d.creator.value);
+    if (d.creatorId.present) {
+      map['creator_id'] = Variable<String, StringType>(d.creatorId.value);
+    }
+    if (d.creatorName.present) {
+      map['creator_name'] = Variable<String, StringType>(d.creatorName.value);
     }
     if (d.createTime.present) {
       map['create_time'] = Variable<DateTime, DateTimeType>(d.createTime.value);

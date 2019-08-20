@@ -85,7 +85,7 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
               overflow: TextOverflow.ellipsis,
             ),
             subtitle: Text(
-              'by ${_task.creator}',
+              'by ${_task.creatorName}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

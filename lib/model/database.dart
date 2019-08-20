@@ -7,7 +7,8 @@ class BasicTasks extends Table {
   IntColumn get doneSubtask => integer().withDefault(Constant(0))();
   TextColumn get name => text()();
   TextColumn get description => text()();
-  TextColumn get creator => text()();
+  TextColumn get creatorId => text()();
+  TextColumn get creatorName => text()();
   DateTimeColumn get createTime => dateTime()();
   DateTimeColumn get startTime => dateTime()();
   DateTimeColumn get endTime => dateTime()();
