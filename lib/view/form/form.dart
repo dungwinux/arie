@@ -102,7 +102,6 @@ class _TaskFormState extends State<TaskForm> {
                 labelText: 'Name',
               ),
               autofocus: true,
-              initialValue: _task.name,
               keyboardType: TextInputType.text,
               validator: (value) {
                 if (value.isEmpty) return 'Name required';
