@@ -69,7 +69,7 @@ class _TaskListState extends State<TaskList> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Icon(
-                    Icons.sentiment_dissatisfied,
+                    Icons.explore,
                     size: 100,
                     color: Colors.black38,
                   ),

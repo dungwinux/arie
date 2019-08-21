@@ -48,11 +48,11 @@ class LoginState extends State<Login> {
       } else {
         final _auth = await account.authentication;
         final res = User(
-            accessToken: _auth.accessToken,
-            name: account.displayName,
-            email: account.email,
-            imageUri: account.photoUrl,
-          );
+          accessToken: _auth.accessToken,
+          name: account.displayName,
+          email: account.email,
+          imageUri: account.photoUrl,
+        );
         await TaskFetch.instance.login(res);
         setState(() {
           user = res;

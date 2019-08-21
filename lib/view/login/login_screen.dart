@@ -21,24 +21,40 @@ class _LoginScreenState extends State<LoginScreen> {
             : Scaffold(
                 body: ConstrainedBox(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Image.asset('images/icon.png', height: 256, width: 256),
-                    SignInButton(
-                      Buttons.Google,
-                      text: 'Sign up with Google',
-                      onPressed: () async {
-                        try {
-                          Login.of(context).signIn();
-                        } catch (e) {
-                          // TODO: [Medium] Add error detail
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                            content: Text(e),
-                            behavior: SnackBarBehavior.floating,
-                          ));
-                        }
-                      },
+                    Flexible(
+                      flex: 6,
+                      child: Image.asset('images/icon.png',
+                          height: 256, width: 256),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Text('Arie',
+                          style: TextStyle(
+                            fontSize: 48,
+                            fontWeight: FontWeight.w200,
+                          )),
+                    ),
+                    Spacer(flex: 1),
+                    Flexible(
+                      flex: 1,
+                      child: SignInButton(
+                        Buttons.Google,
+                        text: 'Sign up with Google',
+                        onPressed: () async {
+                          try {
+                            Login.of(context).signIn();
+                          } catch (e) {
+                            // TODO: [Medium] Add error detail
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(e),
+                              behavior: SnackBarBehavior.floating,
+                            ));
+                          }
+                        },
+                      ),
                     )
                   ],
                 ),

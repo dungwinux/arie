@@ -55,6 +55,7 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
   @override
   Widget buildResults(BuildContext context) {
     return PagewiseListView(
+      physics: BouncingScrollPhysics(),
       pageSize: 10,
       pageFuture: (int pageIndex) {
         return TaskFetch.instance.fetchAll(query, index: 1 + pageIndex * 10);

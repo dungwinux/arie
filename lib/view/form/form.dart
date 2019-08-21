@@ -86,8 +86,6 @@ class _TaskFormState extends State<TaskForm> {
       }
     };
 
-    // TODO: [High] Fix problem when TextFormField(Name, Checkpoint/Title) is randomly not saved
-
     return Form(
       key: _formKey,
       child: SingleChildScrollView(

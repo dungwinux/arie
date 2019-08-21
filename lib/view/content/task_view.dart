@@ -35,9 +35,12 @@ class TaskView extends StatelessWidget {
   }
 
   Widget _bodyText(String text) {
-    return Text(
-      text,
-      textAlign: TextAlign.justify,
+    return Container(
+      child: Text(
+        text,
+        textAlign: TextAlign.justify,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 10),
     );
   }
 

@@ -33,10 +33,9 @@ class RecList extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   onTap: () {
-                    showBottomSheet(
-                      context: context,
+                    Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => TaskView(x),
-                    );
+                    ));
                   },
                   trailing: Icon(Icons.star),
                 ),
