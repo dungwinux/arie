@@ -26,9 +26,8 @@ class _TaskFetchInternal {
 
     try {
       final rawResult = await request.getUri(url);
-      final List<Task> output = (jsonDecode(rawResult.data) as Iterable)
-          .map((x) => Task.fromJson(x))
-          .toList();
+      final List<Task> output =
+          (rawResult.data as Iterable).map((x) => Task.fromJson(x)).toList();
       return output;
     } catch (e) {
       return Future.error('Failed to get data from server');
@@ -42,7 +41,7 @@ class _TaskFetchInternal {
     );
     try {
       final rawResult = await request.getUri(url);
-      final output = Task.fromJson(jsonDecode(rawResult.data));
+      final output = Task.fromJson(rawResult.data);
       return output;
     } catch (e) {
       return Future.error('Failed to get data from server');
