@@ -87,6 +87,19 @@ class _TaskFetchInternal {
       return Future.error('Failed to logout');
     }
   }
+
+  Future<List<Task>> fetchTrending() async {
+    final Uri url = Uri.https(_serverHost, '/api/tasks/trending/');
+    try {
+      final rawResult = await request.getUri(url);
+      final List<Task> output =
+          (rawResult.data as Iterable).map((x) => Task.fromJson(x)).toList();
+      return output;
+    } catch (e) {
+      return Future.error('Failed to get data from server');
+    }
+    // TODO: Implement the subscribe and unsubscribe
+  }
 }
 
 class TaskFetch {
