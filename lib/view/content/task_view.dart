@@ -1,5 +1,6 @@
 import 'package:arie/controller/geolocation.dart';
 import 'package:arie/controller/img_process.dart';
+import 'package:arie/controller/task_fetch.dart';
 import 'package:arie/controller/task_local.dart';
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
@@ -129,8 +130,15 @@ class TaskView extends StatelessWidget {
                       ),
                     );
                     if (confirmDelete) {
-                      taskDB.deleteTask(task.toBasicTask());
-                      Navigator.of(context).pop();
+                      try {
+                        await taskDB.deleteTask(task.toBasicTask());
+                        await TaskFetch.instance.unsubscribe(task.id);
+                        Navigator.of(context).pop();
+                      } catch (e) {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text('Something is not right'),
+                        ));
+                      }
                     } else {
                       return;
                     }
@@ -147,6 +155,7 @@ class TaskView extends StatelessWidget {
                     else
                       try {
                         await taskDB.insertTask(task.toBasicTask());
+                        await TaskFetch.instance.subscribe(task.id);
                         Scaffold.of(context).showSnackBar(SnackBar(
                           content: Text('Added ${task.name}'),
                           behavior: SnackBarBehavior.floating,

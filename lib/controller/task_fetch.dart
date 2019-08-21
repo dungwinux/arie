@@ -98,7 +98,26 @@ class _TaskFetchInternal {
     } catch (e) {
       return Future.error('Failed to get data from server');
     }
-    // TODO: Implement the subscribe and unsubscribe
+  }
+
+  Future<void> subscribe(String id) async {
+    final Uri url = Uri.https(_serverHost, '/api/tasks/$id/');
+    try {
+      final respond = await request.postUri(url);
+      if (respond.statusCode != 200) throw 'Server cannot receive request';
+    } catch (e) {
+      return Future.error('Failed to logout');
+    }
+  }
+
+  Future<void> unsubscribe(String id) async {
+    final Uri url = Uri.https(_serverHost, '/api/tasks/unsubscribe/$id/');
+    try {
+      final respond = await request.deleteUri(url);
+      if (respond.statusCode != 200) throw 'Server cannot receive request';
+    } catch (e) {
+      return Future.error('Failed to logout');
+    }
   }
 }
 
