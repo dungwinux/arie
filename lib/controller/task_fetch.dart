@@ -67,22 +67,22 @@ class _TaskFetchInternal {
     }
   }
 
-  Future<bool> login(User user) async {
+  Future<void> login(User user) async {
     final Uri url = Uri.https(_serverHost, '/api/tasks/user/');
     final content = json.encode(user.toJson());
     try {
       final respond = await request.postUri(url, data: content);
-      return respond.statusCode == 200;
+      if (respond.statusCode != 200) throw 'Server cannot receive request';
     } catch (e) {
       return Future.error('Failed to login');
     }
   }
 
-  Future<bool> logout() async {
+  Future<void> logout() async {
     final Uri url = Uri.https(_serverHost, '/api/tasks/user/');
     try {
       final respond = await request.deleteUri(url);
-      return respond.statusCode == 200;
+      if (respond.statusCode != 200) throw 'Server cannot receive request';
     } catch (e) {
       return Future.error('Failed to logout');
     }
