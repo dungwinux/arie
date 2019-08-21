@@ -141,6 +141,7 @@ class TaskView extends StatelessWidget {
                         } catch (e) {
                           Scaffold.of(context).showSnackBar(SnackBar(
                             content: Text('Something is not right'),
+                            behavior: SnackBarBehavior.floating,
                           ));
                         }
                       } else {
@@ -210,15 +211,15 @@ class TaskView extends StatelessWidget {
                 return FloatingActionButton(
                   child: Icon(Icons.camera),
                   onPressed: () async {
-                    final current = task.checkpoints[task.doneSubtask];
+                    // TODO: [High] Switch to ModalProgressHUD
                     final pw =
                         ProgressDialog(context, ProgressDialogType.Normal);
                     try {
                       if (task.doneSubtask == task.checkpoints.length) {
                         throw 'All task were completed.';
                       }
+                      final current = task.checkpoints[task.doneSubtask];
 
-                      pw.show();
                       final now = DateTime.now();
                       if (now.isBefore(task.startTime)) {
                         throw 'Please wait before the task start.';
@@ -226,26 +227,29 @@ class TaskView extends StatelessWidget {
                         throw 'Task has already ended.';
                       }
 
+                      pw.show();
                       final location = await getLocation();
                       final distance = getDistance(location, current.location);
                       if (distance > 10) {
                         throw 'You are too far away from site.';
                       }
 
-                      pw.hide();
                       // TODO: [Low] Handle edge case of ImagePicker.
                       // See https://pub.dev/packages/image_picker#handling-mainactivity-destruction-on-android
                       final img = await ImagePicker.pickImage(
                         imageQuality: 80,
                         source: ImageSource.camera,
                       );
-                      if (img == null) return;
-                      final Future<Widget> _futureResult =
-                          imgProcess(img.path, mode: current.type)
-                              .then((data) async {
-                        final List<String> res = data;
+                      if (img == null) {
+                        pw.hide();
+                        return;
+                      }
+                      Widget resultWidget;
+                      try {
+                        final List<String> res =
+                            await imgProcess(img.path, mode: current.type);
                         if (res.isEmpty) {
-                          return ListTile(
+                          resultWidget = ListTile(
                             leading: Icon(Icons.warning, color: Colors.yellow),
                             title: Text('Nothing is found'),
                           );
@@ -258,43 +262,34 @@ class TaskView extends StatelessWidget {
                           await taskDB.updateTask(task.toBasicTask());
                           _mapKey.currentState.increase();
 
-                          return ListTile(
+                          resultWidget = ListTile(
                             leading: Icon(Icons.check, color: Colors.green),
                             title: Text('Correct answer'),
                           );
                         } else {
-                          return ListTile(
+                          resultWidget = ListTile(
                             leading: Icon(Icons.close, color: Colors.red),
                             title: Text('Wrong answer'),
                             subtitle: Text('$res'),
                           );
                         }
-                      }).catchError(
-                        (e) => ListTile(
+                      } catch (e) {
+                        resultWidget = ListTile(
                           leading: Icon(Icons.sentiment_dissatisfied,
                               color: Colors.grey),
                           title: Text('Something is not right'),
-                        ),
-                      );
+                        );
+                      }
+                      pw.hide();
                       await showModalBottomSheet(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(16),
+                            ),
                           ),
-                        ),
-                        isScrollControlled: false,
-                        context: context,
-                        builder: (context) => FutureBuilder(
-                          future: _futureResult,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              return snapshot.data;
-                            } else
-                              return LinearProgressIndicator();
-                          },
-                        ),
-                      );
+                          isScrollControlled: false,
+                          context: context,
+                          builder: (context) => resultWidget);
                       if (task.doneSubtask == task.checkpoints.length)
                         await showDialog(
                           context: context,
@@ -317,7 +312,6 @@ class TaskView extends StatelessWidget {
                         content: Text(e is String ? e : 'Unknown error'),
                         behavior: SnackBarBehavior.floating,
                       ));
-                      pw.hide();
                     }
                   },
                 );

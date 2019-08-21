@@ -6,6 +6,7 @@ import 'package:arie/view/form/checkpoint_form.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class FormPage extends StatelessWidget {
   @override
@@ -27,6 +28,7 @@ class TaskForm extends StatefulWidget {
 class _TaskFormState extends State<TaskForm> {
   final _formKey = GlobalKey<FormState>();
   final _task = SubmitTask(checkpoints: []);
+  bool _isSubmitting = false;
 
   Widget _renderCheckpoints() {
     List<Widget> tileList =
@@ -86,215 +88,225 @@ class _TaskFormState extends State<TaskForm> {
       }
     };
 
-    return Form(
-      key: _formKey,
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Padding(
-              child: TextFormField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2),
+    return ModalProgressHUD(
+      inAsyncCall: _isSubmitting,
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2),
+                    ),
+                    hintText: 'Task title',
+                    labelText: 'Name',
                   ),
-                  hintText: 'Task title',
-                  labelText: 'Name',
-                ),
-                autofocus: true,
-                keyboardType: TextInputType.text,
-                validator: (value) {
-                  if (value.isEmpty) return 'Name required';
-                  return null;
-                },
-                onSaved: (String res) {
-                  setState(() {
-                    _task.name = res;
-                  });
-                },
-              ),
-              padding: EdgeInsets.all(16),
-            ),
-            Padding(
-              child: TextFormField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2),
-                  ),
-                  labelText: 'Creator',
-                ),
-                initialValue: Login.of(context).user.name,
-                keyboardType: TextInputType.text,
-                enabled: false,
-              ),
-              padding: EdgeInsets.all(16),
-            ),
-            Padding(
-              child: DateTimeField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2),
-                  ),
-                  labelText: 'Start time',
-                ),
-                onChanged: (DateTime time) {
-                  setState(() {
-                    _task.startTime = time;
-                  });
-                },
-                validator: (DateTime time) {
-                  if (time == null)
-                    return 'Start time is required';
-                  else if (time.isBefore(DateTime.now()))
-                    return 'Start time must be after now';
-                  else
+                  autofocus: true,
+                  keyboardType: TextInputType.text,
+                  validator: (value) {
+                    if (value.isEmpty) return 'Name required';
                     return null;
-                },
-                format: _dateTimeFormat,
-                readOnly: true,
-                onShowPicker: _onShowPicker,
-              ),
-              padding: EdgeInsets.all(16),
-            ),
-            Padding(
-              child: DateTimeField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2),
-                  ),
-                  labelText: 'End time',
+                  },
+                  onSaved: (String res) {
+                    setState(() {
+                      _task.name = res;
+                    });
+                  },
                 ),
-                enabled: (_task.startTime != null),
-                onChanged: (DateTime time) {
-                  setState(() {
-                    _task.endTime = time;
-                  });
-                },
-                validator: (DateTime time) {
-                  if (time == null) return 'End time is required';
-                  DateTime startTime = _task.startTime;
-                  if (startTime.isAfter(time))
-                    return 'End time must be after startTime';
-                  else if (time.isBefore(DateTime.now()))
-                    return 'End time must be after now';
-                  else
+                padding: EdgeInsets.all(16),
+              ),
+              Padding(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2),
+                    ),
+                    labelText: 'Creator',
+                  ),
+                  initialValue: Login.of(context).user.name,
+                  keyboardType: TextInputType.text,
+                  enabled: false,
+                ),
+                padding: EdgeInsets.all(16),
+              ),
+              Padding(
+                child: DateTimeField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2),
+                    ),
+                    labelText: 'Start time',
+                  ),
+                  onChanged: (DateTime time) {
+                    setState(() {
+                      _task.startTime = time;
+                    });
+                  },
+                  validator: (DateTime time) {
+                    if (time == null)
+                      return 'Start time is required';
+                    else if (time.isBefore(DateTime.now()))
+                      return 'Start time must be after now';
+                    else
+                      return null;
+                  },
+                  format: _dateTimeFormat,
+                  readOnly: true,
+                  onShowPicker: _onShowPicker,
+                ),
+                padding: EdgeInsets.all(16),
+              ),
+              Padding(
+                child: DateTimeField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2),
+                    ),
+                    labelText: 'End time',
+                  ),
+                  enabled: (_task.startTime != null),
+                  onChanged: (DateTime time) {
+                    setState(() {
+                      _task.endTime = time;
+                    });
+                  },
+                  validator: (DateTime time) {
+                    if (time == null) return 'End time is required';
+                    DateTime startTime = _task.startTime;
+                    if (startTime.isAfter(time))
+                      return 'End time must be after startTime';
+                    else if (time.isBefore(DateTime.now()))
+                      return 'End time must be after now';
+                    else
+                      return null;
+                  },
+                  format: _dateTimeFormat,
+                  readOnly: true,
+                  onShowPicker: _onShowPicker,
+                ),
+                padding: EdgeInsets.all(16),
+              ),
+              Padding(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2),
+                    ),
+                    hintText: 'Description goes here',
+                    labelText: 'Description',
+                  ),
+                  keyboardType: TextInputType.multiline,
+                  maxLines: 5,
+                  maxLengthEnforced: true,
+                  maxLength: 150,
+                  validator: (value) {
+                    if (value.isEmpty) return 'Description required';
                     return null;
-                },
-                format: _dateTimeFormat,
-                readOnly: true,
-                onShowPicker: _onShowPicker,
-              ),
-              padding: EdgeInsets.all(16),
-            ),
-            Padding(
-              child: TextFormField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2),
-                  ),
-                  hintText: 'Description goes here',
-                  labelText: 'Description',
+                  },
+                  onSaved: (String res) {
+                    setState(() {
+                      _task.description = res;
+                    });
+                  },
                 ),
-                keyboardType: TextInputType.multiline,
-                maxLines: 5,
-                maxLengthEnforced: true,
-                maxLength: 150,
-                validator: (value) {
-                  if (value.isEmpty) return 'Description required';
-                  return null;
-                },
-                onSaved: (String res) {
-                  setState(() {
-                    _task.description = res;
-                  });
-                },
+                padding: EdgeInsets.all(16),
               ),
-              padding: EdgeInsets.all(16),
-            ),
-            _renderCheckpoints(),
-            FlatButton(
-              child: Text('Add checkpoint'),
-              onPressed: () async {
-                final Checkpoint result =
-                    await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => CheckpointForm(),
-                ));
-                if (result != null) {
-                  setState(() {
-                    _task.checkpoints.add(result);
-                  });
-                  Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text('Added ${result.title}'),
-                    behavior: SnackBarBehavior.floating,
-                  ));
-                }
-              },
-            ),
-            Padding(
-              child: RaisedButton(
-                child: Text('Submit'),
+              _renderCheckpoints(),
+              FlatButton(
+                child: Text('Add checkpoint'),
                 onPressed: () async {
-                  final form = _formKey.currentState;
-                  if (form.validate()) {
-                    form.save();
-                    if (_task.checkpoints.length == 0) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('At least one checkpoint is required'),
-                        behavior: SnackBarBehavior.floating,
-                      ));
-                      return;
-                    }
-                    bool confirm = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('Are you sure ?'),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('Cancel'),
-                            onPressed: () {
-                              Navigator.of(context).pop(false);
-                            },
-                          ),
-                          FlatButton(
-                            child: Text('Send'),
-                            onPressed: () {
-                              Navigator.of(context).pop(true);
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                    if (!confirm) return;
-                    try {
-                      final sendSuccess = await TaskFetch.instance.send(_task);
-                      if (sendSuccess) {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text('Success'),
-                          behavior: SnackBarBehavior.floating,
-                        ));
-                      } else {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              'Unable to send task. Wait a moment before trying again'),
-                          behavior: SnackBarBehavior.floating,
-                        ));
-                      }
-                    } catch (e) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('Error: $e'),
-                        behavior: SnackBarBehavior.floating,
-                      ));
-                    }
-                  } else {
+                  final Checkpoint result =
+                      await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => CheckpointForm(),
+                  ));
+                  if (result != null) {
+                    setState(() {
+                      _task.checkpoints.add(result);
+                    });
                     Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text('Please fill in correctly'),
+                      content: Text('Added ${result.title}'),
                       behavior: SnackBarBehavior.floating,
                     ));
                   }
                 },
               ),
-              padding: EdgeInsets.all(16),
-            ),
-          ],
+              Padding(
+                child: RaisedButton(
+                  child: Text('Submit'),
+                  onPressed: () async {
+                    setState(() {
+                      _isSubmitting = true;
+                    });
+                    final form = _formKey.currentState;
+                    if (form.validate()) {
+                      form.save();
+                      if (_task.checkpoints.length == 0) {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text('At least one checkpoint is required'),
+                          behavior: SnackBarBehavior.floating,
+                        ));
+                        return;
+                      }
+                      bool confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Are you sure ?'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                            ),
+                            FlatButton(
+                              child: Text('Send'),
+                              onPressed: () {
+                                Navigator.of(context).pop(true);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                      if (!confirm) return;
+                      try {
+                        final sendSuccess =
+                            await TaskFetch.instance.send(_task);
+                        if (sendSuccess) {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text('Success'),
+                            behavior: SnackBarBehavior.floating,
+                          ));
+                        } else {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                'Unable to send task. Wait a moment before trying again'),
+                            behavior: SnackBarBehavior.floating,
+                          ));
+                        }
+                      } catch (e) {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text('Error: $e'),
+                          behavior: SnackBarBehavior.floating,
+                        ));
+                      }
+                    } else {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('Please fill in correctly'),
+                        behavior: SnackBarBehavior.floating,
+                      ));
+                    }
+                    setState(() {
+                      _isSubmitting = false;
+                    });
+                  },
+                ),
+                padding: EdgeInsets.all(16),
+              ),
+            ],
+          ),
         ),
       ),
     );
