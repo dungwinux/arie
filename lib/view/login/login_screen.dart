@@ -15,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Login(child: Builder(
       builder: (context) {
+        // TODO: [Medium] Add loading when signing in
         return (Login.of(context).isSignedIn)
             ? widget.child
             : Scaffold(

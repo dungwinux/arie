@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 // TODO: [High] Sign the app
 // https://flutter.dev/docs/deployment/android
 
+// TODO: [Medium] i18n
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
