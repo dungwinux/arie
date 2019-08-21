@@ -150,7 +150,7 @@ class TaskView extends StatelessWidget {
                     },
                   )
                 : IconButton(
-                    icon: Icon(Icons.send),
+                    icon: Icon(Icons.file_download),
                     onPressed: () async {
                       if (await taskDB.isTaskExist(task.id))
                         Scaffold.of(context).showSnackBar(SnackBar(
