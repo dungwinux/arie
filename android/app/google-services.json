@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "584033964630-voarp2hvlj66alo4t7imqpjb63qotqrr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kori.arie",
+            "certificate_hash": "f237adf36bdb051ef7c47b78b4c21ae20a7aefb5"
+          }
+        },
+        {
           "client_id": "584033964630-d955kp4744tmi30a8sgif0mhq7idk1ps.apps.googleusercontent.com",
           "client_type": 3
         }
