@@ -50,9 +50,9 @@ class Task {
         'creatorID': creatorId,
         'creatorName': creatorName,
         'description': description,
-        'createTime': createTime.toIso8601String(),
-        'startTime': startTime.toIso8601String(),
-        'endTime': endTime.toIso8601String(),
+        'createTime': createTime.toUtc().toIso8601String(),
+        'startTime': startTime.toUtc().toIso8601String(),
+        'endTime': endTime.toUtc().toIso8601String(),
         'checkpoints': checkpoints.map((Checkpoint x) => x.toJson()),
       };
 
@@ -109,8 +109,8 @@ class SubmitTask {
   Map<String, dynamic> toJson() => {
         'name': name,
         'description': description,
-        'startTime': startTime.toIso8601String(),
-        'endTime': endTime.toIso8601String(),
+        'startTime': startTime.toUtc().toIso8601String(),
+        'endTime': endTime.toUtc().toIso8601String(),
         'checkpoints': checkpoints,
       };
 }

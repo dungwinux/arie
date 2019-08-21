@@ -55,7 +55,7 @@ class _TaskFetchInternal {
     );
     final content = json.encode(task.toJson(), toEncodable: (dynamic item) {
       if (item is DateTime)
-        return item.toIso8601String();
+        return item.toUtc().toIso8601String();
       else
         return item.toJson();
     });
@@ -92,8 +92,9 @@ class _TaskFetchInternal {
     final Uri url = Uri.https(_serverHost, '/api/tasks/trending/');
     try {
       final rawResult = await request.getUri(url);
-      final List<Task> output =
-          (rawResult.data as Iterable).map((x) => Task.fromJson(x)).toList();
+      final List<Task> output = (await Future.wait(
+              (rawResult.data as Iterable).map((id) => fetch(id))))
+          .toList();
       return output;
     } catch (e) {
       return Future.error('Failed to get data from server');
