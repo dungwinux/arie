@@ -4,6 +4,9 @@ import 'package:arie/view/content/task_view.dart';
 import 'package:flutter/material.dart';
 
 class RecList extends StatelessWidget {
+  final Widget onErrorWidget;
+  RecList({this.onErrorWidget});
+
   @override
   Widget build(BuildContext context) {
     final futureTasks = TaskFetch.instance.fetchTrending();
@@ -11,24 +14,28 @@ class RecList extends StatelessWidget {
       future: futureTasks,
       builder: (context, AsyncSnapshot<List<Task>> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError ||
+              (!snapshot.hasData) ||
+              snapshot.data.isEmpty) {
+            return onErrorWidget;
+          }
           final formatList = snapshot.data
               .map(
                 (Task x) => ListTile(
-                  key: Key(x.id),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-                  title: Text(x.name),
+                  title: Text(
+                    x.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   subtitle: Text(
-                    x.description,
+                    'by ${x.creatorName}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TaskView(x, isAssigned: true),
-                      ),
+                    showBottomSheet(
+                      context: context,
+                      builder: (context) => TaskView(x),
                     );
                   },
                   trailing: Icon(Icons.star),
@@ -37,7 +44,9 @@ class RecList extends StatelessWidget {
               .toList();
           return Card(child: Column(children: formatList));
         } else
-          return CircularProgressIndicator();
+          return Center(
+            child: CircularProgressIndicator(),
+          );
       },
     );
   }

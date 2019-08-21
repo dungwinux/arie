@@ -102,40 +102,64 @@ class TaskView extends StatelessWidget {
           ],
         ),
         actions: <Widget>[
-          if (isAssigned)
-            IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () async {
-                final bool confirmDelete = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text('Are you sure ?'),
-                    content: Text(
-                        'You are deleting task in local. This action is irreversible!'),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text('Cancel'),
-                        onPressed: () {
-                          Navigator.of(context).pop(false);
-                        },
+          (isAssigned)
+              ? IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () async {
+                    final bool confirmDelete = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Are you sure ?'),
+                        content: Text(
+                            'You are deleting task in local. This action is irreversible!'),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('Cancel'),
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                          FlatButton(
+                            child: Text('Delete'),
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                          ),
+                        ],
                       ),
-                      FlatButton(
-                        child: Text('Delete'),
-                        onPressed: () {
-                          Navigator.of(context).pop(true);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-                if (confirmDelete) {
-                  taskDB.deleteTask(task.toBasicTask());
-                  Navigator.of(context).pop();
-                } else {
-                  return;
-                }
-              },
-            ),
+                    );
+                    if (confirmDelete) {
+                      taskDB.deleteTask(task.toBasicTask());
+                      Navigator.of(context).pop();
+                    } else {
+                      return;
+                    }
+                  },
+                )
+              : IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: () async {
+                    if (await taskDB.isTaskExist(task.id))
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('${task.name} was already added'),
+                        behavior: SnackBarBehavior.floating,
+                      ));
+                    else
+                      try {
+                        await taskDB.insertTask(task.toBasicTask());
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text('Added ${task.name}'),
+                          behavior: SnackBarBehavior.floating,
+                        ));
+                        Navigator.pop(context);
+                      } catch (e) {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text('Something is not right: $e'),
+                          behavior: SnackBarBehavior.floating,
+                        ));
+                      }
+                  },
+                ),
         ],
       ),
       body: ListView(
