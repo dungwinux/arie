@@ -32,18 +32,23 @@ class Login extends StatefulWidget {
 class LoginState extends State<Login> {
   User user;
   bool isSignedIn = false;
+  bool isSigning = false;
 
   @override
   void initState() {
     super.initState();
     _googleSignIn.onCurrentUserChanged
         .listen((GoogleSignInAccount account) async {
+      setState(() {
+        isSigning = true;
+      });
       if (account == null) {
         await TaskFetch.instance.logout();
         setState(() {
           // Update account
           user = null;
           isSignedIn = false;
+          isSigning = false;
         });
       } else {
         final _auth = await account.authentication;
@@ -57,6 +62,7 @@ class LoginState extends State<Login> {
         setState(() {
           user = res;
           isSignedIn = true;
+          isSigning = false;
         });
       }
     });
