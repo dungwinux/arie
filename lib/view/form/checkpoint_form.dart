@@ -25,10 +25,7 @@ class _CheckpointFormState extends State<CheckpointForm> {
   void initState() {
     super.initState();
     checkpoint = widget.checkpoint ??
-        Checkpoint(
-          location: LatLng(0, 0),
-          type: supportType.first,
-        );
+        Checkpoint(location: LatLng(0, 0), type: supportType.first);
     pw = ProgressDialog(context, ProgressDialogType.Normal);
     _labelController = TextEditingController(text: checkpoint.label);
     _latController =

@@ -1,8 +1,8 @@
+import 'package:arie/controller/login.dart';
 import 'package:arie/controller/task_fetch.dart';
 import 'package:arie/model/checkpoint.dart';
 import 'package:arie/model/task.dart';
 import 'package:arie/view/form/checkpoint_form.dart';
-import 'package:arie/controller/login.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -66,7 +66,6 @@ class _TaskFormState extends State<TaskForm> {
 
   @override
   Widget build(BuildContext context) {
-    _task.creator = Login.of(context).user;
     final _dateTimeFormat = DateFormat('EE, MMM d, y HH:mm');
     final Future<DateTime> Function(BuildContext, DateTime) _onShowPicker =
         (context, currentValue) async {
@@ -86,6 +85,8 @@ class _TaskFormState extends State<TaskForm> {
         return currentValue;
       }
     };
+
+    // TODO: [High] Fix problem when TextFormField(Name, Checkpoint/Title) is randomly not saved
 
     return Form(
       key: _formKey,
@@ -123,7 +124,7 @@ class _TaskFormState extends State<TaskForm> {
                 ),
                 labelText: 'Creator',
               ),
-              initialValue: _task.creator.name,
+              initialValue: Login.of(context).user.name,
               keyboardType: TextInputType.text,
               enabled: false,
             ),
@@ -235,6 +236,7 @@ class _TaskFormState extends State<TaskForm> {
               child: Text('Submit'),
               onPressed: () async {
                 if (_formKey.currentState.validate()) {
+                  _formKey.currentState.save();
                   if (_task.checkpoints.length == 0) {
                     Scaffold.of(context).showSnackBar(SnackBar(
                       content: Text('At least one checkpoint is required'),
@@ -242,7 +244,6 @@ class _TaskFormState extends State<TaskForm> {
                     ));
                     return;
                   }
-                  _formKey.currentState.save();
                   bool confirm = await showDialog<bool>(
                     context: context,
                     builder: (context) => AlertDialog(
