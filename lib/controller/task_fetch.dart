@@ -107,7 +107,7 @@ class _TaskFetchInternal {
       final respond = await request.postUri(url);
       if (respond.statusCode != 200) throw 'Server cannot receive request';
     } catch (e) {
-      return Future.error('Failed to logout');
+      return Future.error('Failed to subscribe');
     }
   }
 
@@ -117,7 +117,7 @@ class _TaskFetchInternal {
       final respond = await request.deleteUri(url);
       if (respond.statusCode != 200) throw 'Server cannot receive request';
     } catch (e) {
-      return Future.error('Failed to logout');
+      return Future.error('Failed to unsubscribe');
     }
   }
 }
