@@ -395,7 +395,7 @@ class _MapViewState extends State<MapView> {
       markerList.add(
         Marker(
           width: 40,
-          height: 80,
+          height: 40,
           point: x.location,
           builder: (context) => Container(
             alignment: Alignment.topCenter,
@@ -416,7 +416,7 @@ class _MapViewState extends State<MapView> {
       alignment: Alignment.bottomCenter,
       children: <Widget>[
         Container(
-          height: MediaQuery.of(context).size.height / 3 * 2,
+          height: MediaQuery.of(context).size.height / 2,
           child: FlutterMap(
             options: MapOptions(center: centerLoc, zoom: 12),
             mapController: widget._mapController,

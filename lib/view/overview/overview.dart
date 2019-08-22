@@ -20,6 +20,7 @@ class _OverviewState extends State<Overview> {
           SliverAppBar(
             centerTitle: true,
             title: Text('Arie'),
+            pinned: true,
             expandedHeight: MediaQuery.of(context).size.height * 0.4,
             flexibleSpace: FlexibleSpaceBar(background: Greeting()),
           ),
