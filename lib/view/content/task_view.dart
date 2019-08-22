@@ -108,7 +108,8 @@ class TaskView extends StatelessWidget {
         actions: <Widget>[
           Builder(
             builder: (context) => (isAssigned
-                ? IconButton(
+                ? FlatButton.icon(
+                    label: Text('Delete'),
                     icon: Icon(Icons.delete),
                     onPressed: () async {
                       final bool confirmDelete = await showDialog<bool>(
@@ -149,7 +150,8 @@ class TaskView extends StatelessWidget {
                       }
                     },
                   )
-                : IconButton(
+                : FlatButton.icon(
+                    label: Text('Get'),
                     icon: Icon(Icons.file_download),
                     onPressed: () async {
                       if (await taskDB.isTaskExist(task.id))

@@ -235,6 +235,7 @@ class _TaskFormState extends State<TaskForm> {
               ),
               Padding(
                 child: RaisedButton(
+                  color: Theme.of(context).accentColor,
                   child: Text('Submit'),
                   onPressed: () async {
                     setState(() {

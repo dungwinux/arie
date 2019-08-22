@@ -61,7 +61,11 @@ class SearchMenuDelegate extends SearchDelegate<Task> {
         return TaskFetch.instance.fetchAll(query, index: 1 + pageIndex * 10);
       },
       retryBuilder: (context, callback) {
-        return RaisedButton(child: Text('Retry'), onPressed: () => callback());
+        return RaisedButton(
+          child: Text('Retry'),
+          onPressed: () => callback(),
+          color: Theme.of(context).accentColor,
+        );
       },
       noItemsFoundBuilder: (context) {
         return Column(

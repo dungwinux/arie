@@ -54,6 +54,7 @@ class _TaskListState extends State<TaskList> {
                     style: TextStyle(color: Colors.black38),
                   ),
                   RaisedButton(
+                    color: Theme.of(context).accentColor,
                     child: Text('Retry'),
                     onPressed: _reload,
                   ),

@@ -51,7 +51,8 @@ class _CheckpointFormState extends State<CheckpointForm> {
         title: Text('Checkpoint editor'),
         actions: <Widget>[
           Builder(
-            builder: (context) => IconButton(
+            builder: (context) => FlatButton.icon(
+              label: Text('Save'),
               icon: Icon(Icons.save),
               onPressed: () {
                 final form = _formKey.currentState;
