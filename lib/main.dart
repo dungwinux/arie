@@ -101,13 +101,27 @@ class _MyHomePageState extends State<MyHomePage> {
                             showAboutDialog(
                               context: context,
                               applicationName: 'Arie',
-                              applicationVersion: 'Beta',
-                              applicationLegalese: 'Made by Kori Team',
+                              applicationVersion: '1.0.0-eICON',
+                              applicationLegalese: 'Copyright 2019, Kori Team',
                               applicationIcon: Image.asset(
                                 'images/icon.png',
                                 width: 48,
                                 height: 48,
                               ),
+                              children: [
+                                ListTile(
+                                  title: Text('Team'),
+                                  subtitle: Text('I'),
+                                ),
+                                ListTile(
+                                  title: Text('Team name'),
+                                  subtitle: Text('Kori'),
+                                ),
+                                ListTile(
+                                  title: Text('Email'),
+                                  subtitle: Text('kori.eicon9@gmail.com'),
+                                ),
+                              ],
                             );
                           },
                         ),
