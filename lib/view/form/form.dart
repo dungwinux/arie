@@ -179,7 +179,7 @@ class _TaskFormState extends State<TaskForm> {
                     if (time == null) return 'End time is required';
                     DateTime startTime = _task.startTime;
                     if (startTime.isAfter(time))
-                      return 'End time must be after startTime';
+                      return 'End time must be after start time';
                     else if (time.isBefore(DateTime.now()))
                       return 'End time must be after now';
                     else

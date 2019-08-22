@@ -12,7 +12,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Login(
@@ -32,35 +31,42 @@ class _LoginScreenState extends State<LoginScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Flexible(
-                            flex: 6,
+                            flex: 12,
                             child: Image.asset('images/icon.png',
                                 height: 256, width: 256),
                           ),
                           Flexible(
-                            flex: 1,
+                            flex: 2,
                             child: Text('Arie',
                                 style: TextStyle(
-                                  fontSize: 48,
+                                  fontSize: 44,
                                   fontWeight: FontWeight.w200,
                                 )),
                           ),
                           Spacer(flex: 1),
                           Flexible(
-                            flex: 1,
-                            child: SignInButton(
-                              Buttons.Google,
-                              text: 'Sign up with Google',
-                              onPressed: () async {
-                                try {
-                                  Login.of(context).signIn();
-                                } catch (e) {
-                                  // TODO: [Medium] Add error detail
-                                  Scaffold.of(context).showSnackBar(SnackBar(
-                                    content: Text(e),
-                                    behavior: SnackBarBehavior.floating,
-                                  ));
-                                }
-                              },
+                            flex: 2,
+                            fit: FlexFit.loose,
+                            child: Container(
+                              margin: EdgeInsets.all(4),
+                              child: Builder(
+                                builder: (context) => SignInButton(
+                                  Buttons.Google,
+                                  text: 'Sign up with Google',
+                                  onPressed: () async {
+                                    try {
+                                      await Login.of(context).signIn();
+                                    } catch (e) {
+                                      // TODO: [Medium] Add error detail
+                                      Scaffold.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text('Cannot sign in. Check network or try again later.'),
+                                        behavior: SnackBarBehavior.floating,
+                                      ));
+                                    }
+                                  },
+                                ),
+                              ),
                             ),
                           )
                         ],

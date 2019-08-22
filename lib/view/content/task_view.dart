@@ -193,35 +193,37 @@ class _TaskViewState extends State<TaskView> {
           ),
         ],
       ),
-      body: ListView(
+      body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
-        children: <Widget>[
-          if (widget.isAssigned)
-            _infoCard(
-              'Completion',
-              task.getTimeline.isEmpty
-                  ? Center(
-                      child: Text('You have not done anything yet'),
-                    )
-                  : AspectRatio(
-                      // TODO: Fix not working graph
-                      aspectRatio: 2,
-                      child: GraphView(
-                        startTime: task.startTime,
-                        endTime: task.endTime,
-                        totalTask: task.checkpoints.length,
-                        timeline: task.getTimeline,
+        child: Column(
+          children: <Widget>[
+            if (widget.isAssigned)
+              _infoCard(
+                'Completion',
+                task.getTimeline.isEmpty
+                    ? Center(
+                        child: Text('You have not done anything yet'),
+                      )
+                    : AspectRatio(
+                        // TODO: Fix not working graph
+                        aspectRatio: 2.5,
+                        child: GraphView(
+                          startTime: task.startTime,
+                          endTime: task.endTime,
+                          totalTask: task.checkpoints.length,
+                          timeline: task.getTimeline,
+                        ),
                       ),
-                    ),
+              ),
+            _renderClock(),
+            MapView(
+              task.checkpoints,
+              task.doneSubtask,
+              key: _mapKey,
             ),
-          _renderClock(),
-          MapView(
-            task.checkpoints,
-            task.doneSubtask,
-            key: _mapKey,
-          ),
-          _infoCard('Description', _bodyText(task.description)),
-        ],
+            _infoCard('Description', _bodyText(task.description)),
+          ],
+        ),
       ),
       floatingActionButton: (widget.isAssigned
           ? Builder(
@@ -392,14 +394,15 @@ class _MapViewState extends State<MapView> {
       final x = widget.checkpoints[i];
       markerList.add(
         Marker(
-          width: 45,
-          height: 45,
+          width: 40,
+          height: 80,
           point: x.location,
           builder: (context) => Container(
+            alignment: Alignment.topCenter,
             child: IconButton(
               icon: Icon(Icons.location_on),
               color: Colors.red,
-              iconSize: 45,
+              iconSize: 40,
               onPressed: () {
                 widget._pageController.jumpToPage(i);
               },
@@ -413,7 +416,7 @@ class _MapViewState extends State<MapView> {
       alignment: Alignment.bottomCenter,
       children: <Widget>[
         Container(
-          height: 300,
+          height: MediaQuery.of(context).size.height / 3 * 2,
           child: FlutterMap(
             options: MapOptions(center: centerLoc, zoom: 12),
             mapController: widget._mapController,

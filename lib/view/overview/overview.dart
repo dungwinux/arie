@@ -20,12 +20,8 @@ class _OverviewState extends State<Overview> {
           SliverAppBar(
             centerTitle: true,
             title: Text('Arie'),
-            expandedHeight: MediaQuery.of(context).size.height * 0.65,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Column(
-                children: <Widget>[Greeting(), OverallPerformance()],
-              ),
-            ),
+            expandedHeight: MediaQuery.of(context).size.height * 0.4,
+            flexibleSpace: FlexibleSpaceBar(background: Greeting()),
           ),
           SliverList(
             delegate: SliverChildListDelegate([
@@ -46,7 +42,7 @@ class Greeting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.fromLTRB(48, 96, 48, 0),
+        padding: EdgeInsets.fromLTRB(48, 100, 48, 0),
         child: Center(
           child: Text(
             'What would you like to do today ?',
@@ -65,9 +61,8 @@ class OverallPerformance extends StatelessWidget {
       Colors.white60,
       Colors.white,
     ];
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.35,
-      width: MediaQuery.of(context).size.width,
+    return AspectRatio(
+      aspectRatio: 2.5,
       child: Opacity(
         opacity: .9,
         child: Container(
