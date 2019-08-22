@@ -33,6 +33,31 @@ class _TaskListState extends State<TaskList> {
         taskList.map((BasicTask task) => Task.fromBasicTask(task)).toList());
   }
 
+  ListTile createListTile(Task x) => ListTile(
+        key: Key(x.id),
+        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+        title: Text(x.name),
+        subtitle: Text(
+          x.description,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TaskView(x, isAssigned: true),
+            ),
+          );
+        },
+        leading: CircularPercentIndicator(
+          radius: 48,
+          percent: (x.percent),
+          center: Text('${x.doneSubtask}/${x.checkpoints.length}'),
+          animation: true,
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -81,38 +106,35 @@ class _TaskListState extends State<TaskList> {
                 ],
               ),
             );
-          _formatList.sort((a, b) => (b.percent.compareTo(a.percent)));
-          final renderList = _formatList
-              .map(
-                (Task x) => ListTile(
-                  key: Key(x.id),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-                  title: Text(x.name),
-                  subtitle: Text(
-                    x.description,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TaskView(x, isAssigned: true),
-                      ),
-                    );
-                  },
-                  leading: CircularPercentIndicator(
-                    radius: 48,
-                    percent: (x.percent),
-                    center: Text('${x.doneSubtask}/${x.checkpoints.length}'),
-                    animation: true,
-                  ),
-                ),
-              )
-              .toList();
+          List<Task> _completedList =
+              _formatList.where((x) => x.percent == 1).toList();
+          List<Task> _pendingList =
+              _formatList.where((x) => x.percent != 1).toList();
 
-          return Card(child: Column(children: renderList));
+          _pendingList.sort((a, b) => (b.percent.compareTo(a.percent)));
+
+          List<Widget> renderList = <Widget>[
+            Card(
+              child: Column(
+                children: _pendingList.map(createListTile).toList(),
+              ),
+            ),
+          ];
+          if (_completedList.length > 0)
+            renderList.addAll([
+              Padding(
+                child: Text('Completed',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                padding: EdgeInsets.symmetric(vertical: 20),
+              ),
+              Card(
+                child: Column(
+                  children: _completedList.map(createListTile).toList(),
+                ),
+              ),
+            ]);
+
+          return Column(children: renderList);
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: CircularProgressIndicator(),
