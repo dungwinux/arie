@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         // TODO: [Medium] Change theme
         primarySwatch: Colors.amber,
+        accentColor: Colors.lightBlueAccent
       ),
       home: MyHomePage(),
       builder: (context, widget) {

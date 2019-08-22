@@ -55,6 +55,7 @@ class _TaskListState extends State<TaskList> {
           percent: (x.percent),
           center: Text('${x.doneSubtask}/${x.checkpoints.length}'),
           animation: true,
+          progressColor: Theme.of(context).accentColor,
         ),
       );
 

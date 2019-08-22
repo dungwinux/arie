@@ -10,15 +10,35 @@ class Overview extends StatefulWidget {
 }
 
 class _OverviewState extends State<Overview> {
-  List<Widget> _widgetList = [
-    Greeting(),
-    OverallPerformance(),
-    TaskList(),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return ListView(children: _widgetList);
+    return Container(
+      decoration: BoxDecoration(color: Colors.amber),
+      child: CustomScrollView(
+        physics: BouncingScrollPhysics(),
+        slivers: <Widget>[
+          SliverAppBar(
+            centerTitle: true,
+            title: Text('Arie'),
+            expandedHeight: MediaQuery.of(context).size.height * 0.6,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Column(
+                children: <Widget>[Greeting(), OverallPerformance()],
+              ),
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate([
+              DecoratedBox(
+                child: TaskList(),
+                decoration: BoxDecoration(color: Colors.transparent),
+              ),
+              SizedBox(height: 64),
+            ]),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -26,7 +46,7 @@ class Greeting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(48),
+        padding: EdgeInsets.fromLTRB(48, 96, 48, 0),
         child: Center(
           child: Text(
             'What would you like to do today ?',
@@ -42,16 +62,17 @@ class OverallPerformance extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: [High] Replace mock test
     List<Color> gradientColors = [
-      Color(0x5f23b6e6),
-      Color(0xff02d39a),
+      Colors.white60,
+      Colors.white,
     ];
-    return AspectRatio(
-      aspectRatio: 2,
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.35,
+      width: MediaQuery.of(context).size.width,
       child: Opacity(
         opacity: .8,
         child: Container(
-          padding: EdgeInsets.all(12),
-          width: MediaQuery.of(context).size.width,
+          padding: EdgeInsets.fromLTRB(
+              24, 24, MediaQuery.of(context).size.width / 2, 24),
           child: FlChart(
             chart: LineChart(
               LineChartData(
@@ -59,29 +80,27 @@ class OverallPerformance extends StatelessWidget {
                   titlesData: FlTitlesData(show: false),
                   borderData: FlBorderData(show: false),
                   minX: 0,
-                  maxX: 10,
+                  maxX: 5,
                   minY: 0,
                   maxY: 10,
                   lineBarsData: [
                     LineChartBarData(
                       spots: [
-                        FlSpot(0, 3),
-                        FlSpot(1, 2),
-                        FlSpot(2, 5),
-                        FlSpot(3, 3),
+                        FlSpot(0, 1),
+                        FlSpot(1, 3),
+                        FlSpot(2, 2),
+                        FlSpot(3, 4),
                         FlSpot(4, 4),
-                        FlSpot(5, 9),
-                        FlSpot(6, 5),
-                        FlSpot(7, 3),
-                        FlSpot(8, 5),
-                        FlSpot(9, 4),
-                        FlSpot(10, 5),
+                        FlSpot(5, 6),
                       ],
                       barWidth: 5,
                       colors: gradientColors,
                       isCurved: true,
                       isStrokeCapRound: true,
-                      dotData: FlDotData(show: true),
+                      dotData: FlDotData(
+                        show: true,
+                        dotColor: Theme.of(context).accentColor,
+                      ),
                       belowBarData: BelowBarData(show: false),
                     )
                   ]),
