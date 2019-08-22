@@ -12,13 +12,26 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:slide_countdown_clock/slide_countdown_clock.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class TaskView extends StatelessWidget {
+class TaskView extends StatefulWidget {
   // Convert task into Future
   final Task task;
   final bool isAssigned;
-  final GlobalKey<_MapViewState> _mapKey = GlobalKey();
 
   TaskView(this.task, {this.isAssigned = false});
+
+  @override
+  _TaskViewState createState() => _TaskViewState();
+}
+
+class _TaskViewState extends State<TaskView> {
+  Task task;
+  final GlobalKey<_MapViewState> _mapKey = GlobalKey();
+
+  @override
+  initState() {
+    super.initState();
+    task = widget.task;
+  }
 
   Widget _titleText(String text) {
     return Container(
@@ -88,8 +101,6 @@ class TaskView extends StatelessWidget {
     return null;
   }
 
-  // TODO: [Low] Change how task_view opened in Search
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,7 +118,7 @@ class TaskView extends StatelessWidget {
         ),
         actions: <Widget>[
           Builder(
-            builder: (context) => (isAssigned
+            builder: (context) => (widget.isAssigned
                 ? FlatButton.icon(
                     label: Text('Delete'),
                     icon: Icon(Icons.delete),
@@ -180,8 +191,9 @@ class TaskView extends StatelessWidget {
         ],
       ),
       body: ListView(
+        physics: BouncingScrollPhysics(),
         children: <Widget>[
-          if (isAssigned)
+          if (widget.isAssigned)
             _infoCard(
               'Completion',
               task.getTimeline.isEmpty
@@ -189,7 +201,8 @@ class TaskView extends StatelessWidget {
                       child: Text('You have not done anything yet'),
                     )
                   : AspectRatio(
-                      aspectRatio: 1.75,
+                      // TODO: Fix not working graph
+                      aspectRatio: 2,
                       child: GraphView(
                         startTime: task.startTime,
                         endTime: task.endTime,
@@ -207,7 +220,7 @@ class TaskView extends StatelessWidget {
           _infoCard('Description', _bodyText(task.description)),
         ],
       ),
-      floatingActionButton: (isAssigned
+      floatingActionButton: (widget.isAssigned
           ? Builder(
               builder: (context) {
                 return FloatingActionButton(
@@ -257,9 +270,11 @@ class TaskView extends StatelessWidget {
                           );
                         }
                         if (res.any((x) => x == current.label)) {
-                          task.checkpoints[task.doneSubtask].doneTime =
-                              DateTime.now();
-                          task.doneSubtask += 1;
+                          setState(() {
+                            task.checkpoints[task.doneSubtask].doneTime =
+                                DateTime.now().toUtc();
+                            task.doneSubtask += 1;
+                          });
                           // Update current checkpoint
                           await taskDB.updateTask(task.toBasicTask());
                           _mapKey.currentState.increase();

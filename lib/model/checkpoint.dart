@@ -26,7 +26,7 @@ class Checkpoint {
           double.tryParse(res['latitude'].toString()),
           double.tryParse(res['longitude'].toString()),
         ),
-        doneTime = null;
+        doneTime = DateTime.tryParse(res['doneTime'] ?? '');
 
   Map<String, dynamic> toJson() => {
         'title': title,
@@ -35,5 +35,6 @@ class Checkpoint {
         'type': type,
         'longitude': location.longitude,
         'latitude': location.latitude,
+        'doneTime': doneTime?.toUtc()?.toIso8601String(),
       };
 }

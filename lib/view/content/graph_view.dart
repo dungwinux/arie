@@ -82,7 +82,7 @@ class GraphView extends StatelessWidget {
             LineChartBarData(
               spots: dataPointGenerator(),
               colors: gradientColors,
-              barWidth: 5,
+              barWidth: 2.5,
               isStrokeCapRound: true,
               dotData: FlDotData(show: false),
               belowBarData: BelowBarData(

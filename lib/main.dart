@@ -19,10 +19,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Arie',
       theme: ThemeData(
-        // TODO: [Medium] Change theme
-        primarySwatch: Colors.amber,
-        accentColor: Colors.lightBlueAccent
-      ),
+          // TODO: [Medium] Change theme
+          primarySwatch: Colors.amber,
+          accentColor: Colors.lightBlueAccent),
       home: MyHomePage(),
       builder: (context, widget) {
         return LoginScreen(
@@ -63,52 +62,56 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: Icon(Icons.menu),
               onPressed: () {
                 showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                  ),
                   context: context,
                   builder: (context) {
-                    return Scaffold(
-                      body: Column(
-                        children: <Widget>[
-                          ListTile(
-                            leading: CircleAvatar(
-                              child: Builder(
-                                builder: (context) {
-                                  final loc = Login.of(context).user.imageUri;
-                                  // TODO: [Low] Handle onNetworkFailed
-                                  if (loc != null)
-                                    return Image.network(loc);
-                                  else
-                                    return Icon(Icons.account_circle);
-                                },
-                              ),
-                            ),
-                            title: Text(Login.of(context).user.name),
-                            subtitle: Text(Login.of(context).user.email),
-                            trailing: FlatButton(
-                              child: Text('Sign out'),
-                              onPressed: () {
-                                Login.of(context).signOut();
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ListTile(
+                          leading: CircleAvatar(
+                            child: Builder(
+                              builder: (context) {
+                                final loc = Login.of(context).user.imageUri;
+                                // TODO: [Low] Handle onNetworkFailed
+                                if (loc != null)
+                                  return Image.network(loc);
+                                else
+                                  return Icon(Icons.account_circle);
                               },
                             ),
                           ),
-                          Divider(),
-                          ListTile(
-                            title: Text('About'),
-                            onTap: () {
-                              showAboutDialog(
-                                context: context,
-                                applicationName: 'Arie',
-                                applicationVersion: 'Beta',
-                                applicationLegalese: 'Made by Kori Team',
-                                applicationIcon: Image.asset(
-                                  'images/icon.png',
-                                  width: 48,
-                                  height: 48,
-                                ),
-                              );
+                          title: Text(Login.of(context).user.name),
+                          subtitle: Text(Login.of(context).user.email),
+                          trailing: FlatButton(
+                            child: Text('Sign out'),
+                            onPressed: () {
+                              Login.of(context).signOut();
                             },
                           ),
-                        ],
-                      ),
+                        ),
+                        Divider(),
+                        ListTile(
+                          title: Text('About'),
+                          onTap: () {
+                            showAboutDialog(
+                              context: context,
+                              applicationName: 'Arie',
+                              applicationVersion: 'Beta',
+                              applicationLegalese: 'Made by Kori Team',
+                              applicationIcon: Image.asset(
+                                'images/icon.png',
+                                width: 48,
+                                height: 48,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     );
                   },
                 );
