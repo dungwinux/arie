@@ -20,7 +20,7 @@ class _OverviewState extends State<Overview> {
           SliverAppBar(
             centerTitle: true,
             title: Text('Arie'),
-            expandedHeight: MediaQuery.of(context).size.height * 0.6,
+            expandedHeight: MediaQuery.of(context).size.height * 0.65,
             flexibleSpace: FlexibleSpaceBar(
               background: Column(
                 children: <Widget>[Greeting(), OverallPerformance()],
@@ -29,9 +29,9 @@ class _OverviewState extends State<Overview> {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              DecoratedBox(
-                child: TaskList(),
+              Container(
                 decoration: BoxDecoration(color: Colors.transparent),
+                child: TaskList(),
               ),
               SizedBox(height: 64),
             ]),
@@ -69,41 +69,51 @@ class OverallPerformance extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.35,
       width: MediaQuery.of(context).size.width,
       child: Opacity(
-        opacity: .8,
+        opacity: .9,
         child: Container(
           padding: EdgeInsets.fromLTRB(
-              24, 24, MediaQuery.of(context).size.width / 2, 24),
+            MediaQuery.of(context).size.width * 0.1,
+            MediaQuery.of(context).size.width * 0.005,
+            MediaQuery.of(context).size.width / 2,
+            MediaQuery.of(context).size.width * 0.005,
+          ),
           child: FlChart(
             chart: LineChart(
               LineChartData(
-                  gridData: FlGridData(show: false),
-                  titlesData: FlTitlesData(show: false),
-                  borderData: FlBorderData(show: false),
-                  minX: 0,
-                  maxX: 5,
-                  minY: 0,
-                  maxY: 10,
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: [
-                        FlSpot(0, 1),
-                        FlSpot(1, 3),
-                        FlSpot(2, 2),
-                        FlSpot(3, 4),
-                        FlSpot(4, 4),
-                        FlSpot(5, 6),
-                      ],
-                      barWidth: 5,
-                      colors: gradientColors,
-                      isCurved: true,
-                      isStrokeCapRound: true,
-                      dotData: FlDotData(
-                        show: true,
-                        dotColor: Theme.of(context).accentColor,
-                      ),
-                      belowBarData: BelowBarData(show: false),
-                    )
-                  ]),
+                gridData: FlGridData(show: false),
+                titlesData: FlTitlesData(show: false),
+                borderData: FlBorderData(show: false),
+                minX: 0,
+                maxX: 5,
+                minY: 0,
+                maxY: 10,
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: [
+                      FlSpot(0, 0),
+                      FlSpot(1, 3),
+                      FlSpot(2, 2),
+                      FlSpot(3, 4),
+                      FlSpot(4, 4),
+                      FlSpot(5, 6),
+                    ],
+                    barWidth: 5,
+                    colors: gradientColors,
+                    isCurved: true,
+                    isStrokeCapRound: true,
+                    dotData: FlDotData(
+                      show: true,
+                      dotColor: Theme.of(context).accentColor,
+                    ),
+                    belowBarData: BelowBarData(show: false),
+                  )
+                ],
+                lineTouchData: LineTouchData(
+                  enabled: true,
+                  touchTooltipData: TouchTooltipData(
+                      tooltipBgColor: Theme.of(context).accentColor),
+                ),
+              ),
             ),
           ),
         ),

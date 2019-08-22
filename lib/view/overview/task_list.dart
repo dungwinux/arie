@@ -115,9 +115,12 @@ class _TaskListState extends State<TaskList> {
           _pendingList.sort((a, b) => (b.percent.compareTo(a.percent)));
 
           List<Widget> renderList = <Widget>[
-            Card(
-              child: Column(
-                children: _pendingList.map(createListTile).toList(),
+            Container(
+              constraints: BoxConstraints(maxWidth: 550),
+              child: Card(
+                child: Column(
+                  children: _pendingList.map(createListTile).toList(),
+                ),
               ),
             ),
           ];
@@ -128,9 +131,12 @@ class _TaskListState extends State<TaskList> {
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 padding: EdgeInsets.symmetric(vertical: 20),
               ),
-              Card(
-                child: Column(
-                  children: _completedList.map(createListTile).toList(),
+              Container(
+                constraints: BoxConstraints(maxWidth: 550),
+                child: Card(
+                  child: Column(
+                    children: _completedList.map(createListTile).toList(),
+                  ),
                 ),
               ),
             ]);

@@ -58,13 +58,16 @@ class _TaskViewState extends State<TaskView> {
   }
 
   Widget _infoCard(String title, Widget body) {
-    return Card(
-      margin: EdgeInsets.all(6),
-      child: ListTile(
-        title: _titleText(title),
-        subtitle: Padding(
-          padding: EdgeInsets.symmetric(vertical: 24),
-          child: body,
+    return Container(
+      constraints: BoxConstraints(maxWidth: 550),
+      child: Card(
+        margin: EdgeInsets.all(6),
+        child: ListTile(
+          title: _titleText(title),
+          subtitle: Padding(
+            padding: EdgeInsets.symmetric(vertical: 24),
+            child: body,
+          ),
         ),
       ),
     );
