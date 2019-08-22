@@ -89,6 +89,8 @@ class _TaskFormState extends State<TaskForm> {
     };
 
     return ModalProgressHUD(
+      opacity: 0.5,
+      color: Colors.black,
       inAsyncCall: _isSubmitting,
       child: Form(
         key: _formKey,

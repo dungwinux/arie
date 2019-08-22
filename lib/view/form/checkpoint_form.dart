@@ -71,6 +71,8 @@ class _CheckpointFormState extends State<CheckpointForm> {
         ],
       ),
       body: ModalProgressHUD(
+        opacity: 0.5,
+        color: Colors.black,
         inAsyncCall: _isRecognizing,
         child: Form(
           key: _formKey,

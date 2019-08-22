@@ -20,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
         builder: (context) {
           // TODO: [Medium] Add loading when signing in
           return ModalProgressHUD(
+            opacity: 0.5,
+            color: Colors.black,
             inAsyncCall: Login.of(context).isSigning,
             child: (Login.of(context).isSignedIn)
                 ? widget.child
