@@ -95,13 +95,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         Divider(),
+                        // Credit
                         ListTile(
                           title: Text('About'),
                           onTap: () {
                             showAboutDialog(
                               context: context,
                               applicationName: 'Arie',
-                              applicationVersion: '1.0.0-eICON',
+                              applicationVersion: '1.0.0',
                               applicationLegalese: 'Copyright 2019, Kori Team',
                               applicationIcon: Image.asset(
                                 'images/icon.png',
@@ -109,10 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                 height: 48,
                               ),
                               children: [
-                                ListTile(
-                                  title: Text('Team'),
-                                  subtitle: Text('I'),
-                                ),
                                 ListTile(
                                   title: Text('Team name'),
                                   subtitle: Text('Kori'),
