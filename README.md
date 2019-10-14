@@ -1,3 +1,5 @@
+<img src="images/icon.png" height="128">
+
 # arie
 
 This is Flutter application, created as a front-end for Arie project - team Kori's project in e-ICON Contest 2019.
